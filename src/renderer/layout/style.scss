@@ -1,0 +1,20 @@
+.logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px;
+}
+
+li {
+  display: flex !important;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+li span {
+  flex: 1;
+}
+
+li span a {
+  display: block !important;
+  color: inherit !important;
+}

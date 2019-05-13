@@ -1,0 +1,31 @@
+.template {
+  position: relative;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 5px 50px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all ease-in-out 0.3s;
+
+  .template-content {
+    height: 200px;
+    background-size: cover;
+    background-position: 50% 0;
+    background-size: 100%;
+
+    img {
+      max-height: 100%;
+    }
+  }
+
+  .template-title {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}

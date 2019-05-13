@@ -1,0 +1,22 @@
+@import "antd/dist/antd.css";
+
+img {
+  display: inline-block;
+  width: 100%;
+  height: auto;
+}
+
+.ant-row + .ant-row {
+  margin-top: 16px;
+}
+
+.ant-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  > main {
+    flex: 1;
+    overflow: auto;
+  }
+}
