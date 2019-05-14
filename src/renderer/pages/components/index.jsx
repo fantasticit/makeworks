@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Col, Row, Layout, Button } from "antd";
-
 import * as Components from "../../../resource/components/index";
+import "./style.scss";
 
 const { Header, Content } = Layout;
 
@@ -9,10 +9,10 @@ export default class extends React.Component {
   render() {
     return (
       <>
-        <Header style={{ background: "#fff", padding: "0 15px" }}>
+        <Header>
           <h1>组件</h1>
         </Header>
-        <Content style={{ background: "#ECECEC", padding: "30px" }}>
+        <Content>
           {Object.keys(Components)
             .reduce((a, c, i) => {
               let index = ~~(i / 3);
@@ -37,6 +37,7 @@ export default class extends React.Component {
                             <Button>复制</Button>,
                             <Button>文档</Button>
                           ]}
+                          className="component-card"
                         >
                           <Target />
                         </Card>

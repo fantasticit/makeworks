@@ -9,7 +9,7 @@
   transition: all ease-in-out 0.3s;
 
   .template-content {
-    height: 200px;
+    padding-bottom: 65%;
     background-size: cover;
     background-position: 50% 0;
     background-size: 100%;
@@ -19,10 +19,22 @@
     }
   }
 
-  .template-title {
-    margin-top: 8px;
+  p {
     text-align: center;
-    font-size: 14px;
+  }
+
+  .template-title {
+    overflow: hidden;
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
+    font-size: 16px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-top: 1em;
+  }
+
+  .template-desc {
+    color: rgba(0, 0, 0, 0.45);
   }
 
   &:hover {

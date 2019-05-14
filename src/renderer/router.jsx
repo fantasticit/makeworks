@@ -1,10 +1,10 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
-
-import Project from "./pages/project";
-import Templates from "./pages/templates";
-import Components from "./pages/components";
-import Setting from "./pages/setting";
+import { Route, Switch } from "react-router";
+import Project from "./pages/Project/index";
+import ProjectManager from "./pages/ProjectManager/index";
+import Templates from "./pages/Templates/index";
+import Components from "./pages/Components/index";
+import Setting from "./pages/Setting/index";
 
 export const routes = [
   {
@@ -35,10 +35,17 @@ export const routes = [
   }
 ];
 
+const hideRoutes = [
+  {
+    path: "/project-manager",
+    component: ProjectManager
+  }
+];
+
 export default function() {
   return (
     <Switch>
-      {routes.map((route: any) => (
+      {[...routes, ...hideRoutes].map(route => (
         <Route key={route.path} exact={true} {...route} />
       ))}
     </Switch>

@@ -1,18 +1,21 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "1.0.0",
+  "name": "canary",
+  "version": "0.0.1",
   "main": "./dist/main.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test jest",
     "dev": "node config/dev-runner.js",
-    "build": "node config/build.js && electron-builder"
+    "build": "cross-env NODE_ENV=production node config/build.js && electron-builder"
   },
   "build": {
-    "productName": "ElectronReact",
+    "productName": "Canary",
     "appId": "org.develar.ElectronReact",
     "directories": {
       "output": "build"
     },
+    "extraResources": [
+      "./src/resource"
+    ],
     "files": [
       "dist/",
       "node_modules/",
@@ -111,18 +114,22 @@
   },
   "dependencies": {
     "@antv/data-set": "^0.10.2",
-    "@qcharts/react": "0.0.3",
+    "@qcharts/react": "0.0.4",
     "antd": "^3.17.0",
     "bizcharts": "^3.5.2",
+    "electron-store": "^3.2.0",
     "fs-extra": "^7.0.1",
     "jsoneditor": "^5.32.5",
     "jsoneditor-react": "^1.0.0",
     "react": "^16.8.6",
-    "react-beautiful-dnd": "^11.0.3",
-    "react-dnd": "^7.4.5",
-    "react-dnd-html5-backend": "^7.4.4",
     "react-dom": "^16.8.6",
-    "react-router-dom": "^5.0.0"
+    "react-redux": "^7.0.3",
+    "react-router": "^5.0.0",
+    "react-router-dom": "^5.0.0",
+    "redux": "^4.0.1",
+    "redux-persist": "^5.10.0",
+    "redux-persist-electron-storage": "^2.1.0",
+    "redux-thunk": "^2.3.0"
   },
   "browserslist": [
     "> 1%",

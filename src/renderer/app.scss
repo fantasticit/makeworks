@@ -6,6 +6,27 @@ img {
   height: auto;
 }
 
+.none {
+  width: 75px;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 108px;
+  margin-left: 42.5px;
+  background-size: 75px 75px;
+  margin: 0 auto;
+  margin-bottom: 50px;
+}
+
 .ant-row + .ant-row {
   margin-top: 16px;
 }
@@ -15,8 +36,18 @@ img {
   flex-direction: column;
   height: 100vh;
 
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  }
+
   > main {
     flex: 1;
+    padding: 15px;
     overflow: auto;
+    background: #f0f2f5;
   }
 }

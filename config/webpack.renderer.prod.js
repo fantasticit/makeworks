@@ -1,15 +1,15 @@
-const path = require('path')
-const webpack = require('webpack')
-const merge = require('webpack-merge')
-const baseConfig = require('./webpack.base')
-const UglyfyJsPlugin = require('uglifyjs-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const path = require("path");
+const webpack = require("webpack");
+const merge = require("webpack-merge");
+const baseConfig = require("./webpack.base");
+const UglyfyJsPlugin = require("uglifyjs-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = merge(baseConfig, {
-  mode: 'production',
+  mode: "production",
   entry: {
-    renderer: './src/renderer/index.tsx'
+    renderer: "./src/renderer/index"
   },
   devtool: false,
   optimization: {
@@ -26,12 +26,12 @@ module.exports = merge(baseConfig, {
       })
     ],
     runtimeChunk: {
-      name: 'manifest'
+      name: "manifest"
     },
     splitChunks: {
       cacheGroups: {
         commons: {
-          chunks: 'initial',
+          chunks: "initial",
           minChunks: 2,
           maxInitialRequests: 5,
           minSize: 0
@@ -39,8 +39,8 @@ module.exports = merge(baseConfig, {
 
         vendor: {
           test: /node_modules/,
-          chunks: 'initial',
-          name: 'vendor',
+          chunks: "initial",
+          name: "vendor",
           priority: 10,
           enforce: true
         }
@@ -51,8 +51,8 @@ module.exports = merge(baseConfig, {
     new OptimizeCssAssetsPlugin({}),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new HtmlWebpackPlugin({
-      filename: './index.html',
-      template: 'src/index.html',
+      filename: "./index.html",
+      template: "src/index.html",
       inject: true,
       hash: true,
       minify: {
@@ -60,8 +60,8 @@ module.exports = merge(baseConfig, {
         collapseWhitespace: true, // 移除空白符
         removeAttributeQuotes: true // 移除 HTML 中的属性引号
       },
-      nodeModules: path.resolve(__dirname, '../node_modules')
+      nodeModules: path.resolve(__dirname, "../node_modules")
     })
   ],
-  target: 'electron-renderer'
-})
+  target: "electron-renderer"
+});

@@ -1,26 +1,23 @@
 import React from "react";
-import { hashHistory } from "react-router-dom";
 import {
   Card,
+  Spin,
   Col,
   Row,
   Layout,
-  Button,
   Modal,
-  Tabs,
   Form,
   Input,
-  Radio,
   message
 } from "antd";
-import { ipcRenderer } from "electron";
-
-import * as Components from "../../../resource/components/index";
-
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { getTemplates } from "../../store/modules/template";
+import { createProject } from "../../store/modules/project";
+import Empty from "../../components/Empty";
 import "./style.scss";
 
-const { Header, Content } = Layout;
-const TabPane = Tabs.TabPane;
+const { Header } = Layout;
 
 class Template extends React.Component {
   state = { selectedTemplate: null, showModal: false, showLoading: false };
@@ -39,26 +36,13 @@ class Template extends React.Component {
     e.preventDefault();
     this.props["form"].validateFields((err, values) => {
       if (!err) {
-        this.setState({ showLoading: true });
-
-        ipcRenderer.once("success", (_, arg) => {
-          message.success("创建成功");
-          let path = {
-            pathname: "/",
-            state: arg
-          };
-          this.props.history.push(path);
-        });
-
-        ipcRenderer.once("error", (_, arg) => {
-          this.setState({ showLoading: false });
-          message.error("创建项目失败");
-        });
-
-        ipcRenderer.send("create:template", {
+        this.props.createProject({
           template: this.state.selectedTemplate,
-          ...values
+          project: values
         });
+        message.success("创建成功");
+        this.handleCancel();
+        this.props.history.push({ pathname: "/" });
       }
     });
   };
@@ -74,71 +58,102 @@ class Template extends React.Component {
   };
 
   render() {
-    const { form } = this.props;
+    const { templates = [], form, loading, getTemplates } = this.props;
     const { getFieldDecorator } = form;
+
+    if (!templates || !templates.length) {
+      getTemplates();
+    }
+
+    console.log(this.props);
 
     return (
       <>
-        <Header style={{ background: "#fff", padding: "0 15px" }}>
+        <Header>
           <h1>模板</h1>
         </Header>
-        <Content style={{ background: "#ECECEC", padding: "30px" }}>
-          <Row>
-            <Col
-              span={6}
-              onDoubleClick={() => {
-                this.setSelectedTemplate("empty");
-                this.showModal();
-              }}
-            >
-              <div className="template">
-                <div className="template-content">
-                  <img
-                    src={"https://p4.ssl.qhimg.com/t017d1e1b36af7bfe79.png"}
-                    alt="模板预览"
-                  />
-                </div>
-                <p className="template-title">空白模板</p>
-              </div>
-            </Col>
-          </Row>
+        <main>
+          <Spin spinning={loading} delay={500}>
+            <Row>
+              {templates && templates.length ? (
+                templates.map(template => (
+                  <Col
+                    span={6}
+                    key={template.path}
+                    onClick={() => {
+                      this.setSelectedTemplate(template);
+                      this.showModal();
+                    }}
+                  >
+                    <div className="template">
+                      <div
+                        className="template-content"
+                        style={{ backgroundImage: `url(${template.cover})` }}
+                      />
+                      <p className="template-title">{template.title}</p>
+                      <p className="template-desc">{template.description}</p>
+                    </div>
+                  </Col>
+                ))
+              ) : (
+                <Empty />
+              )}
+            </Row>
+          </Spin>
 
           <Modal
             title="创建项目"
             visible={this.state.showModal}
             onOk={this.handleOk}
             okText={"创建"}
-            confirmLoading={this.state.showLoading}
+            confirmLoading={loading}
             onCancel={this.handleCancel}
           >
             <Form layout="vertical">
               <Form.Item label="路径">
-                {getFieldDecorator("projectPath", {
+                {getFieldDecorator("path", {
                   rules: [
                     {
                       required: true,
-                      message: "项目路径"
+                      message: "请输入项目路径"
                     }
                   ],
                   initialValue: "/documents/repo/"
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="名称">
-                {getFieldDecorator("projectName", {
+                {getFieldDecorator("name", {
                   rules: [
                     {
                       required: true,
-                      message: "项目路径"
+                      message: "请输入项目名称"
                     }
                   ]
                 })(<Input type="textarea" />)}
               </Form.Item>
             </Form>
           </Modal>
-        </Content>
+        </main>
       </>
     );
   }
 }
 
-export default Form.create({ name: "project-info-form" })(Template);
+const mapStateToProps = state => ({
+  templates: state.template.templates,
+  loading: state.loading.loading
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      getTemplates,
+      createProject
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Form.create({ name: "project-info-form" })(Template));

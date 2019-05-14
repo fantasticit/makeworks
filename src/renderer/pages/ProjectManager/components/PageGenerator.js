@@ -33,7 +33,6 @@ export default class PageGenerator extends React.Component {
           const { currentSelectedComponent, shouldUpdate } = this.state;
           currentSelectedComponent.props = this.editor.get();
           this.forceUpdate();
-          console.log("editor change", this.state);
         }
       });
       editor.set(this.state.currentSelectedComponentJSONProps);
@@ -143,7 +142,6 @@ export default class PageGenerator extends React.Component {
   };
 
   generatePage = () => {
-    console.log("page", this.state.selectedComponents);
     this.toggleShowModal();
   };
 
@@ -160,9 +158,12 @@ export default class PageGenerator extends React.Component {
     return (
       <Drawer
         title="创建新页面"
-        width={"90%"}
+        width={"100%"}
         visible={this.props.visible}
-        onClose={this.props.onClose}
+        onClose={() => {
+          this.reset();
+          this.props.onClose();
+        }}
       >
         <div className="container">
           <header>

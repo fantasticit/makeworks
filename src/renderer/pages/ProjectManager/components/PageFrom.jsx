@@ -12,7 +12,7 @@ import {
   Radio,
   message
 } from "antd";
-import { ipcRenderer } from "electron";
+import { createPageForProject } from "../../../api";
 
 class PageFrom extends React.Component {
   state = { showLoading: false };
@@ -35,33 +35,16 @@ class PageFrom extends React.Component {
     e.preventDefault();
     this.props["form"].validateFields((err, values) => {
       if (!err) {
-        console.log(
-          "确认生成页面",
-          values,
-          this.props.page,
-          this.props.project
-        );
-
         this.setState({ showLoading: true });
 
-        ipcRenderer.once("success", (_, arg) => {
+        createPageForProject({
+          ...values,
+          components: this.props.page,
+          path: this.props.project.path
+        }).then(() => {
           this.setState({ showLoading: false });
-          this.props.toggleShowModal();
-
-          message.success("创建成功");
-        });
-
-        ipcRenderer.once("error", (_, arg) => {
-          this.setState({ showLoading: false });
-          message.error("创建项目失败");
-        });
-
-        ipcRenderer.send("generate:page", {
-          project: this.props.project,
-          page: {
-            data: this.props.page,
-            ...values
-          }
+          message.success("新建页面成功");
+          this.handleCancel();
         });
       }
     });
@@ -86,7 +69,7 @@ class PageFrom extends React.Component {
       >
         <Form layout="vertical">
           <Form.Item label="页面名城">
-            {getFieldDecorator("pageName", {
+            {getFieldDecorator("name", {
               rules: [
                 {
                   required: true,
@@ -97,7 +80,7 @@ class PageFrom extends React.Component {
             })(<Input />)}
           </Form.Item>
           <Form.Item label="页面路由">
-            {getFieldDecorator("pagePath", {
+            {getFieldDecorator("router", {
               rules: [
                 {
                   required: true,

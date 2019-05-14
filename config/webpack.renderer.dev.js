@@ -1,25 +1,25 @@
-const path = require('path')
-const webpack = require('webpack')
-const merge = require('webpack-merge')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const baseConfig = require('./webpack.base')
-let port = process.argv[2] || 8080
+const path = require("path");
+const webpack = require("webpack");
+const merge = require("webpack-merge");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const baseConfig = require("./webpack.base");
+let port = process.argv[2] || 8080;
 
 module.exports = merge(baseConfig, {
-  mode: 'development',
+  mode: "development",
   entry: {
     renderer: [
-      'react-hot-loader/patch',
+      "react-hot-loader/patch",
       `webpack-dev-server/client?http://localhost:${port}`,
-      'webpack/hot/only-dev-server',
-      './src/renderer/index.tsx'
+      "webpack/hot/only-dev-server",
+      "./src/renderer/index"
     ]
   },
-  devtool: 'cheap-module-eval-source-map',
+  devtool: "cheap-module-eval-source-map",
   plugins: [
     new HtmlWebpackPlugin({
-      filename: './index.html',
-      template: 'src/index.html',
+      filename: "./index.html",
+      template: "src/index.html",
       inject: true,
       hash: true
     }),
@@ -27,5 +27,5 @@ module.exports = merge(baseConfig, {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.WatchIgnorePlugin([/\.d\.ts$/])
   ],
-  target: 'electron-renderer'
-})
+  target: "electron-renderer"
+});

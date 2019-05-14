@@ -1,43 +1,22 @@
 import React from "react";
 import {
+  Avatar,
   Card,
   Col,
   Row,
-  Layout,
   Button,
-  Modal,
-  Tabs,
-  List,
   Icon,
-  Drawer
+  Popconfirm,
+  Layout,
+  message
 } from "antd";
-import { ipcRenderer } from "electron";
-import PageGenerator from "./components/PageGenerator";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import Empty from "../../components/Empty";
 import "./style.scss";
 
-const { Header, Content } = Layout;
-const TabPane = Tabs.TabPane;
-
-export default class extends React.Component {
+class Project extends React.Component {
   state = { shouldGenerateProject: true, project: null, showEditor: false };
-
-  componentWillMount() {
-    const { history } = this.props;
-    const project = history.location.state || null;
-
-    if (project) {
-      const { projectPath } = project;
-
-      if (projectPath) {
-        ipcRenderer.on("success", (_, arg) => {
-          Object.assign(project, arg);
-        });
-        ipcRenderer.send("read:package", { projectPath });
-      }
-
-      this.setState({ project: project, shouldGenerateProject: false });
-    }
-  }
 
   gotoTemplatePage = () => {
     this.props.history.push({ pathname: "/templates" });
@@ -47,104 +26,73 @@ export default class extends React.Component {
     this.setState({ showEditor: !this.state.showEditor });
   };
 
+  managerProject = project => {
+    this.props.history.push({ pathname: "/project-manager", state: project });
+  };
+
   render() {
-    const { shouldGenerateProject, project = {} } = this.state;
+    const { projects } = this.props;
 
     return (
       <>
-        <Header style={{ background: "#fff", padding: "0 15px" }}>
+        <Layout.Header>
           <h1>项目</h1>
-        </Header>
-        <Content style={{ background: "#ECECEC", padding: "30px" }}>
-          {/* S 页面生成器 */}
-          <PageGenerator
-            project={this.state.project}
-            visible={this.state.showEditor}
-            onClose={this.toggleShowEditor}
-          />
-          {/* E 页面生成器*/}
-
-          {shouldGenerateProject ? (
-            <Button type="primary" onClick={this.gotoTemplatePage}>
-              创建项目
-            </Button>
+          <Button type="primary" onClick={this.gotoTemplatePage}>
+            创建项目
+          </Button>
+        </Layout.Header>
+        <main>
+          {projects.length <= 0 ? (
+            <div style={{ textAlign: "center", margin: "50px auto" }}>
+              {/* <p style={{ fontSize: "2em" }}>无</p> */}
+              <Empty />
+              <Button onClick={this.gotoTemplatePage}>创建项目</Button>
+            </div>
           ) : (
-            <>
-              <Row gutter={16}>
-                <Col span={8}>
+            <Row gutter={16}>
+              {projects.map(project => (
+                <Col span={8} key={project.path}>
                   <Card
-                    size="small"
-                    title="项目依赖"
-                    extra={[
-                      <Button shape="circle" icon="sync" />,
-                      <Button
-                        style={{ marginLeft: 10 }}
-                        type="primary"
-                        shape="circle"
-                        icon="plus"
-                      />
+                    actions={[
+                      <Icon
+                        type="edit"
+                        onClick={() => this.managerProject(project)}
+                      />,
+                      <Popconfirm
+                        title="确定删除？"
+                        okText="Yes"
+                        cancelText="No"
+                        onConfirm={() => message.info("删除功能正在开发")}
+                      >
+                        <Icon type="delete" />
+                      </Popconfirm>
                     ]}
                   >
-                    <Tabs defaultActiveKey="1">
-                      <TabPane tab={<span>dependencies</span>} key="1">
-                        <List
-                          dataSource={Object.keys(
-                            (project.pkgJSON && project.pkgJSON.dependencies) ||
-                              {}
-                          )}
-                          renderItem={item => (
-                            <List.Item key={item}>{item}</List.Item>
-                          )}
-                        />
-                      </TabPane>
-                      <TabPane tab={<span>devDependencies</span>} key="2">
-                        <List
-                          dataSource={Object.keys(
-                            (project.pkgJSON &&
-                              project.pkgJSON.devDependencies) ||
-                              {}
-                          )}
-                          renderItem={item => (
-                            <List.Item key={item}>{item}</List.Item>
-                          )}
-                        />
-                      </TabPane>
-                    </Tabs>
+                    <Card.Meta
+                      avatar={<Avatar src={project.template.cover} />}
+                      title={project.name}
+                      description={project.createAt}
+                    />
                   </Card>
+                  ,
                 </Col>
-
-                {[{ title: "页面", data: project.pages }].map(
-                  ({ title, data }) => {
-                    return (
-                      <Col span={8} key={title}>
-                        <Card
-                          key={title}
-                          title={title}
-                          extra={[
-                            <Button shape="circle" icon="sync" />,
-                            <Button
-                              style={{ marginLeft: 10 }}
-                              type="primary"
-                              shape="circle"
-                              icon="plus"
-                              onClick={this.toggleShowEditor}
-                            />
-                          ]}
-                        >
-                          <List
-                            dataSource={data}
-                            renderItem={item => <List.Item>{item}</List.Item>}
-                          />
-                        </Card>
-                      </Col>
-                    );
-                  }
-                )}
-              </Row>
-            </>
+              ))}
+            </Row>
           )}
-        </Content>
+        </main>
       </>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  loading: state.loading.loading,
+  projects: state.project.projects
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Project);

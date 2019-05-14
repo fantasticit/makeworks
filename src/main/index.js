@@ -1,34 +1,86 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import "./createTemplate";
-import "./project";
+import { ipcMain } from "electron";
+import createProject from "./createProject";
+import readTemplates from "./templateServer";
+import ProjectManager from "./ProjectManager";
+import startUp from "./startUp";
 
-let mainWindow = null;
+startUp().then(() => {
+  let templates = [];
+  (async () => {
+    try {
+      templates = await readTemplates();
+    } catch (e) {
+      console.error("读取模板出错", e);
+    }
+  })();
 
-let port = process.env.DEV_PORT || 8080;
-
-app.on("ready", () => {
-  mainWindow = new BrowserWindow({
-    width: 1024,
-    height: 728,
-    show: false
+  // 读取模板
+  ipcMain.on("get:templates", async evt => {
+    try {
+      evt.sender.send("success", templates);
+    } catch (e) {
+      evt.sender.send("error", e);
+    }
   });
 
-  const winURL =
-    process.env.NODE_ENV === "production"
-      ? `file://${__dirname}/index.html`
-      : `http://localhost:${port}`;
-  mainWindow.loadURL(winURL);
+  // 创建新项目
+  ipcMain.on("create:project", async (evt, arg) => {
+    const { template, project } = arg;
 
-  mainWindow.webContents.on("did-finish-load", () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
+    try {
+      const ret = await createProject(template, project);
+      evt.sender.send("success", ret);
+    } catch (e) {
+      console.error("新建项目失败", e);
+      evt.sender.send("error", e);
+    }
+  });
+
+  // 项目管理
+  const pool = new Map();
+
+  const getManager = path => {
+    let manager = null;
+
+    if (pool.has(path)) {
+      manager = pool.get(path);
+    } else {
+      manager = new ProjectManager();
+      manager.setRootPath(path);
+      pool.set(path, manager);
     }
 
-    mainWindow.show();
-    mainWindow.focus();
+    return manager;
+  };
+
+  // 获取项目信息
+  ipcMain.on("project:info", async (evt, arg) => {
+    const { path } = arg;
+
+    try {
+      let manager = getManager(path);
+      let json = manager.getPkgJSON();
+      let pages = await manager.getDirInfo("pages");
+
+      evt.sender.send("success", {
+        dependencies: json.dependencies || [],
+        devDependencies: json.devDependencies || [],
+        pages
+      });
+    } catch (e) {
+      console.log("读取项目信息失败", e);
+      evt.sender.send("error", e);
+    }
   });
 
-  mainWindow.on("close", () => (mainWindow = null));
+  ipcMain.on("project:createPage", async (evt, arg) => {
+    try {
+      let manager = getManager(arg.path);
+      await manager.generateNewPage(arg);
+      evt.sender.send("success");
+    } catch (e) {
+      console.log("为项目新建页面失败", e);
+      evt.sender.send("error", e);
+    }
+  });
 });
-
-app.on("window-all-close", () => process.platform !== "darwin" && app.quit());

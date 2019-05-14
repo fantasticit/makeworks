@@ -1,11 +1,11 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Layout, Menu, Breadcrumb, Icon } from "antd";
+import { Layout, Menu, Icon } from "antd";
 import { routes } from "../router";
+import Logo from "./logo.png";
 import "./style.scss";
 
-const { Footer, Sider } = Layout;
-const SubMenu = Menu.SubMenu;
+const { Sider } = Layout;
 
 export class Container extends React.Component {
   state = {
@@ -13,7 +13,6 @@ export class Container extends React.Component {
   };
 
   onCollapse = collapsed => {
-    console.log(collapsed);
     this.setState({ collapsed });
   };
 
@@ -25,26 +24,26 @@ export class Container extends React.Component {
           collapsed={this.state.collapsed}
           onCollapse={this.onCollapse}
         >
-          <div className="logo" />
+          <div className="logo">
+            <img src={Logo} alt="logo" />
+            <h1>Canary</h1>
+          </div>
           <Menu
             theme="dark"
             defaultSelectedKeys={[routes[0].path]}
             mode="inline"
           >
             {routes.map(route => (
-              <Menu.Item key={route.title}>
-                <Icon type={route.icon} />
-                <span>
-                  <NavLink to={route.path}>{route.title}</NavLink>
-                </span>
+              <Menu.Item key={route.path}>
+                <NavLink to={route.path}>
+                  <Icon type={route.icon} />
+                  <span>{route.title}</span>
+                </NavLink>
               </Menu.Item>
             ))}
           </Menu>
         </Sider>
-        <Layout>
-          {this.props.children}
-          {/* <Footer style={{ textAlign: "center" }}>Ant Design ©2018</Footer> */}
-        </Layout>
+        <Layout>{this.props.children}</Layout>
       </Layout>
     );
   }
