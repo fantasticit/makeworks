@@ -23,15 +23,15 @@ class Container extends React.Component {
     return (
       <Layout style={{ minHeight: "100vh" }}>
         <Sider
-          collapsible
-          collapsed={this.state.collapsed}
-          onCollapse={this.onCollapse}
+          // collapsible
+          // collapsed={this.state.collapsed}
+          // onCollapse={this.onCollapse}
         >
           <div className="logo">
             <img src={Logo} alt="logo" />
             <h1>Canary</h1>
           </div>
-          <Menu theme="dark" selectedKeys={[pathname]} mode="inline">
+          <Menu selectedKeys={[pathname]} mode="inline">
             {routes.map(route => (
               <Menu.Item key={route.path}>
                 <NavLink to={route.path}>

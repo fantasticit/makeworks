@@ -61,6 +61,16 @@
     box-shadow: 0 1px 7px rgba(0, 0, 0, 0.06);
     border-bottom: rgba(0, 0, 0, 0.06);
     text-align: right;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    button  {
+      + button {
+        margin-left: 1em;
+      }
+    }
   }
 
   > main {
@@ -73,7 +83,7 @@
 
 .preview-box {
   position: relative;
-  width: 58%;
+  width: 50%;
   height: 100%;
   margin: 0 auto;
 
@@ -103,19 +113,34 @@
     height: 100%;
     box-shadow: 0 3px 16px 0 rgba(0, 0, 0, 0.04);
     overflow: auto;
+    padding: 0 1px;
 
     .canary-render-component-wrapper {
       display: inline-block;
-      width: 100%;
+      width: calc(100% + 2px);
       height: auto;
       border: 1px dashed;
       border-color: #000;
+      margin: 5px 0;
 
       &.is-inner {
         position: absolute;
-        left: 0;
-        top: 0;
+        left: -1px;
+        top: -5px;
         height: 100%;
+        padding: 5px;
+
+        > .canary-render-component-wrapper {
+          height: 100%;
+          margin: 0;
+        }
+      }
+
+      &.is-preview {
+        border: 0;
+        margin: 0;
+        padding: 0 !important;
+        top: 0 !important;
       }
 
       &:hover {
@@ -136,7 +161,7 @@
   position: absolute;
   top: 0;
   // z-index: 1;
-  width: calc(20% - 10px);
+  width: calc(25% - 10px);
   height: 100%;
   background: #fff;
   transition: all ease-in-out 0.3s;

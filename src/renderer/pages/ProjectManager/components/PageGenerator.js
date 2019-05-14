@@ -2,10 +2,9 @@ import React from "react";
 import { Card, Button, Icon, Drawer } from "antd";
 import JSONEditor from "jsoneditor";
 import "jsoneditor/dist/jsoneditor.min.css";
+import PageForm from "./PageFrom";
 import * as Components from "../../../../resource/components/index";
 import "./style.scss";
-
-import PageForm from "./PageFrom";
 
 export default class PageGenerator extends React.Component {
   state = {
@@ -13,8 +12,8 @@ export default class PageGenerator extends React.Component {
     currentDragComponent: null, // 当前选中被拖拽组件
     currentSelectedComponent: null, // 新页面被选中编辑组件
     currentSelectedComponentJSONProps: {}, // 新页面被选中编辑组件 props
-
-    showModal: false
+    showModal: false,
+    isPreview: false
   };
 
   addSelectedComponents = Component => {
@@ -68,7 +67,7 @@ export default class PageGenerator extends React.Component {
         }}
         onClick={() => this.addSelectedComponents(WrappedComponent)}
         bordered={true}
-        title={info.title}
+        // title={info.title}
       >
         <TargetComponnet />
       </Card>
@@ -76,6 +75,7 @@ export default class PageGenerator extends React.Component {
   };
 
   createPreviewComponent = (Component, parentKey = null) => {
+    const isPreview = this.state.isPreview
     const hasChildren = Component.children;
     const key = parentKey ? parentKey + "_" + Component.key : Component.key;
 
@@ -95,7 +95,7 @@ export default class PageGenerator extends React.Component {
     return hasChildren ? (
       <Component.Instance key={key} {...Component.props}>
         <div
-          className="canary-render-component-wrapper is-inner"
+          className={!isPreview ? "canary-render-component-wrapper is-inner" : "canary-render-component-wrapper is-inner is-preview"}
           id={key}
           onDragOver={e => {
             e.stopPropagation();
@@ -118,7 +118,7 @@ export default class PageGenerator extends React.Component {
     ) : (
       <div
         key={key}
-        className="canary-render-component-wrapper"
+        className={!isPreview ? "canary-render-component-wrapper" : "canary-render-component-wrapper is-preview"}
         onClick={onClick}
       >
         <Component.Instance {...Component.props} />
@@ -155,6 +155,8 @@ export default class PageGenerator extends React.Component {
   };
 
   render() {
+    const { project } = this.props
+
     return (
       <Drawer
         title="创建新页面"
@@ -167,21 +169,20 @@ export default class PageGenerator extends React.Component {
       >
         <div className="container">
           <header>
-            <Button onClick={this.generatePage}>生成</Button>
+            <div>
+              <p>
+                正在编辑：<strong>{project.name}</strong>
+              </p>
+            </div>
+
+            <div>
+              <Button icon="eye" onClick={() => this.setState({ isPreview: !this.state.isPreview })}>预览</Button>
+              <Button type="primary" icon="plus" onClick={this.generatePage}>生成</Button>
+            </div>
           </header>
 
           <main>
-            {/* S 组件选择面板 */}
-            <div className="component-panel">
-              <header>
-                <h3>添加组件</h3>
-                <Icon type="close" />
-              </header>
-              <main>
-                {Object.keys(Components).map(this.createAddableComponnet)}
-              </main>
-            </div>
-            {/* E 组件选择面板 */}
+            
 
             {/* S 页面预览 */}
             <div className="preview-box">
@@ -218,6 +219,19 @@ export default class PageGenerator extends React.Component {
               </main>
             </div>
             {/* E 页面预览 */}
+
+
+            {/* S 组件选择面板 */}
+            <div className="component-panel">
+              <header>
+                <h3>添加组件</h3>
+                <Icon type="close" />
+              </header>
+              <main>
+                {Object.keys(Components).map(this.createAddableComponnet)}
+              </main>
+            </div>
+            {/* E 组件选择面板 */}
 
             {/* S JSON 编辑器 */}
             <div className="preview-component-editor-container">

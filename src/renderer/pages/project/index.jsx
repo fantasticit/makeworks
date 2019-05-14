@@ -51,7 +51,7 @@ class Project extends React.Component {
           ) : (
             <Row gutter={16}>
               {projects.map(project => (
-                <Col span={8} key={project.path}>
+                <Col span={6} key={project.path}>
                   <Card
                     actions={[
                       <Icon
@@ -74,7 +74,6 @@ class Project extends React.Component {
                       description={project.createAt}
                     />
                   </Card>
-                  ,
                 </Col>
               ))}
             </Row>

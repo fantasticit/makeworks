@@ -1,9 +1,10 @@
 import React from "react";
-import { Card, Col, Row, Layout, Button } from "antd";
+import { Card, Col, Row, Layout, Button, Input } from "antd";
 import * as Components from "../../../resource/components/index";
 import "./style.scss";
 
 const { Header, Content } = Layout;
+const Search = Input.Search;
 
 export default class extends React.Component {
   render() {

@@ -8,7 +8,7 @@ export default function startUp() {
 
     app.on("ready", () => {
       mainWindow = new BrowserWindow({
-        width: 1024,
+        width: 1296,
         height: 768,
         show: false
       });

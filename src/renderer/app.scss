@@ -6,19 +6,15 @@ img {
   height: auto;
 }
 
+p {
+  margin: 0;
+}
+
 .none {
   width: 75px;
   display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
   flex-direction: column;
-  -webkit-box-pack: end;
-  -webkit-justify-content: flex-end;
-  -ms-flex-pack: end;
   justify-content: flex-end;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
   height: 108px;
   margin-left: 42.5px;
@@ -37,16 +33,23 @@ img {
   height: 100vh;
 
   header {
+    position: relative;
+    z-index: 10;
     display: flex;
     justify-content: space-between;
     padding: 15px;
     background: #fff;
-    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+
+    h1 {
+      margin: 0;
+    }
+
   }
 
   > main {
     flex: 1;
-    padding: 15px;
+    padding: 15px 15px 30px;
     overflow: auto;
     background: #f0f2f5;
   }

@@ -10,7 +10,7 @@ class Div extends React.Component {
 
   static defaultProps = {
     gutter: 0,
-    height: 180,
+    height: 240,
     backgroundColor: "transparent",
     children: []
   };

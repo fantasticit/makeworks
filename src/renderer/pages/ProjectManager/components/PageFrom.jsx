@@ -64,11 +64,12 @@ class PageFrom extends React.Component {
         visible={this.props.visible}
         onOk={this.handleOk}
         okText={"创建"}
+        cancelText={"取消"}
         confirmLoading={this.state.showLoading}
         onCancel={this.handleCancel}
       >
         <Form layout="vertical">
-          <Form.Item label="页面名城">
+          <Form.Item label="页面名称">
             {getFieldDecorator("name", {
               rules: [
                 {

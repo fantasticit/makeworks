@@ -104,6 +104,7 @@ class Template extends React.Component {
             visible={this.state.showModal}
             onOk={this.handleOk}
             okText={"创建"}
+            cancelText={"取消"}
             confirmLoading={loading}
             onCancel={this.handleCancel}
           >

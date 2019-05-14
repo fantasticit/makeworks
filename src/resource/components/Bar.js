@@ -24,7 +24,7 @@ class BarChart extends React.Component {
       { product: "椰汁", year: "2018", sales: 21.2 }
     ],
     dataFields: { row: "year", value: "sales", text: "product" },
-    size: ["100%", "100%"],
+    size: ["100%", 200],
     forceFit: true
   };
 
@@ -38,18 +38,16 @@ class BarChart extends React.Component {
     } = this.props;
 
     return (
-      <div style={{ height: "200px" }}>
-        <Chart
-          data={data}
-          dataFields={dataFields}
-          size={size}
-          forceFit={forceFit}
-        >
-          <Bar />
-          <Axis />
-          <Axis orient={"left"} />
-        </Chart>
-      </div>
+      <Chart
+        data={data}
+        dataFields={dataFields}
+        size={size}
+        forceFit={forceFit}
+      >
+        <Bar />
+        <Axis />
+        <Axis orient={"left"} />
+      </Chart>
     );
   }
 }
