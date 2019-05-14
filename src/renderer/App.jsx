@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Container } from "./layout/index";
+import Container from "./layout/index";
 import Router from "./router";
 
 import "./app.scss";

@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, withRouter } from "react-router-dom";
 import { Layout, Menu, Icon } from "antd";
 import { routes } from "../router";
 import Logo from "./logo.png";
@@ -7,7 +7,7 @@ import "./style.scss";
 
 const { Sider } = Layout;
 
-export class Container extends React.Component {
+class Container extends React.Component {
   state = {
     collapsed: false
   };
@@ -17,6 +17,9 @@ export class Container extends React.Component {
   };
 
   render() {
+    const { history } = this.props;
+    const pathname = history.location.pathname;
+
     return (
       <Layout style={{ minHeight: "100vh" }}>
         <Sider
@@ -28,11 +31,7 @@ export class Container extends React.Component {
             <img src={Logo} alt="logo" />
             <h1>Canary</h1>
           </div>
-          <Menu
-            theme="dark"
-            defaultSelectedKeys={[routes[0].path]}
-            mode="inline"
-          >
+          <Menu theme="dark" selectedKeys={[pathname]} mode="inline">
             {routes.map(route => (
               <Menu.Item key={route.path}>
                 <NavLink to={route.path}>
@@ -48,3 +47,5 @@ export class Container extends React.Component {
     );
   }
 }
+
+export default withRouter(Container);

@@ -65,8 +65,6 @@ class Template extends React.Component {
       getTemplates();
     }
 
-    console.log(this.props);
-
     return (
       <>
         <Header>
