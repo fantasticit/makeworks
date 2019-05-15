@@ -1,5 +1,6 @@
 import { shell } from "electron";
 import { exec } from "child_process";
+import logo from "../assets/logo.png";
 
 let workerProcess = null;
 let noop = () => {};
@@ -8,12 +9,21 @@ export function runExec({
   command,
   onData = noop,
   onError = noop,
-  onClose = noop
+  onClose = noop,
+  onExit = noop
 }) {
   workerProcess = exec(command);
+
+  workerProcess.once("exit", onExit);
+  workerProcess.once("error", onError);
+
   workerProcess.stdout.on("data", onData);
   workerProcess.stdout.on("error", onError);
   workerProcess.stdout.on("close", onClose);
+}
+
+export function notify({ title, ...other }) {
+  return new Notification(title, { ...other, icon: logo });
 }
 
 export function openTerminal(terminal, command) {
@@ -36,7 +46,13 @@ export function openTerminal(terminal, command) {
       break;
   }
 
-  return runExec({ command: wrapped });
+  return runExec({
+    command: wrapped,
+    onData: () =>
+      notify({ title: "终端打开成功", body: `执行命令: ${command}` }),
+    onError: e =>
+      notify({ title: "终端打开失败", body: `错误信息：${e.message || e}` })
+  });
 }
 
 /**
@@ -45,4 +61,5 @@ export function openTerminal(terminal, command) {
  */
 export function openFileFolder(path) {
   shell.showItemInFolder(path);
+  notify({ title: `文件打开成功`, body: `路径: ${path}` });
 }

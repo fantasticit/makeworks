@@ -13,6 +13,8 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { storage } from "../../store";
 import { changeEditor, changeTerminal } from "../../store/modules/setting";
+import { notify } from "../../shell";
+
 import "./style.scss";
 
 const store = storage.store;
@@ -81,7 +83,11 @@ class Setting extends React.Component {
                 cancelText="No"
                 onConfirm={() => {
                   store.clear();
-                  message.success("已清空所有缓存");
+                  notify({
+                    title: "清空缓存",
+                    body: "已清空所有缓存"
+                  });
+                  this.forceUpdate();
                 }}
               >
                 <Button>清理</Button>

@@ -21,6 +21,17 @@ export default class PageGenerator extends React.Component {
     this.setState({ selectedComponents: [...selectedComponents, Component] });
   };
 
+  getPreviewContainer = el => {
+    this.previewConatiner = el;
+  };
+
+  scrollPreviewContainer = () => {
+    let el = this.previewConatiner;
+    if (el) {
+      Promise.resolve().then(() => (el.scrollTop = el.scrollHeight));
+    }
+  };
+
   initJSONEditor = container => {
     if (this.editor) {
       return;
@@ -29,9 +40,11 @@ export default class PageGenerator extends React.Component {
     if (container) {
       const editor = new JSONEditor(container, {
         onChange: () => {
-          const { currentSelectedComponent, shouldUpdate } = this.state;
+          const { currentSelectedComponent } = this.state;
           currentSelectedComponent.props = this.editor.get();
-          this.forceUpdate();
+          // console.log("update");
+          // this.forceUpdate();
+          this.setState({ currentSelectedComponent });
         }
       });
       editor.set(this.state.currentSelectedComponentJSONProps);
@@ -54,7 +67,7 @@ export default class PageGenerator extends React.Component {
       Instance: props => <TargetComponnet key={key} {...props} />
     };
 
-    if (defaultProps.children) {
+    if (defaultProps && defaultProps.children) {
       WrappedComponent.children = [];
     }
 
@@ -66,7 +79,10 @@ export default class PageGenerator extends React.Component {
           e.stopPropagation();
           this.setState({ currentDragComponent: WrappedComponent });
         }}
-        onClick={() => this.addSelectedComponents(WrappedComponent)}
+        onClick={() => {
+          this.addSelectedComponents(WrappedComponent);
+          this.scrollPreviewContainer();
+        }}
         title={info.title}
         bordered={true}
       >
@@ -112,6 +128,7 @@ export default class PageGenerator extends React.Component {
             this.state.currentDragComponent.parent = Component;
             Component.children.push(this.state.currentDragComponent);
             this.setState({ currentComponent: null });
+            this.scrollPreviewContainer();
           }}
           onClick={onClick}
           data-info={Component.info.title}
@@ -231,6 +248,7 @@ export default class PageGenerator extends React.Component {
               </header>
 
               <main
+                ref={this.getPreviewContainer}
                 onDragOver={e => {
                   e.stopPropagation();
                   e.preventDefault();
@@ -240,6 +258,7 @@ export default class PageGenerator extends React.Component {
                   e.stopPropagation();
                   this.addSelectedComponents(this.state.currentDragComponent);
                   this.setState({ currentComponent: null });
+                  this.scrollPreviewContainer();
                 }}
               >
                 {this.state.selectedComponents.map(child =>

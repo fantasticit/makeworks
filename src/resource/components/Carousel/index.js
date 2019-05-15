@@ -1,5 +1,6 @@
 import React from "react";
 import { Carousel } from "antd";
+import "./style.css";
 
 class Div extends React.Component {
   static componentInfo = {
@@ -9,7 +10,15 @@ class Div extends React.Component {
   };
 
   static defaultProps = {
-    children: []
+    children: [
+      <div>
+        <h1>页面 1</h1>
+      </div>,
+
+      <div>
+        <h1>页面 2</h1>
+      </div>
+    ]
   };
 
   render() {

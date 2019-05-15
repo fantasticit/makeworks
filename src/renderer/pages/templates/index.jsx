@@ -15,6 +15,7 @@ import { connect } from "react-redux";
 import { getTemplates } from "../../store/modules/template";
 import { createProject } from "../../store/modules/project";
 import Empty from "../../components/Empty";
+import { notify } from "../../shell";
 import "./style.scss";
 
 const { Header } = Layout;
@@ -40,7 +41,10 @@ class Template extends React.Component {
           template: this.state.selectedTemplate,
           project: values
         });
-        message.success("创建成功");
+        notify({
+          title: "成功创建项目 " + values.name,
+          body: values.path
+        });
         this.handleCancel();
         this.props.history.push({ pathname: "/" });
       }

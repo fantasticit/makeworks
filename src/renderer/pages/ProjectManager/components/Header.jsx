@@ -1,7 +1,7 @@
 import React from "react";
 import { PageHeader, Button, Tooltip } from "antd";
 import { connect } from "react-redux";
-import { openFileFolder, runExec, openTerminal } from "../../../shell";
+import { openFileFolder, runExec, openTerminal, notify } from "../../../shell";
 
 class Header extends React.Component {
   render() {
@@ -18,9 +18,13 @@ class Header extends React.Component {
             onClick={() =>
               runExec({
                 command: `code ${path}`,
-                onData: d => console.log(d),
-                onError: d => console.error(d),
-                onClose: d => d
+                onExit: () =>
+                  notify({ title: `项目打开成功`, body: `路径: ${path}` }),
+                onError: e =>
+                  notify({
+                    title: `项目打开失败`,
+                    body: `错误信息: ${e.message || e}`
+                  })
               })
             }
           >

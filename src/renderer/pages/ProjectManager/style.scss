@@ -1,7 +1,12 @@
 // 头部组件样式
-.ant-page-header .ant-page-header-content-view {
-  float: right;
-  padding: 0;
+.ant-page-header {
+  // display: flex;
+  // align-items: center;
+
+  .ant-page-header-content-view {
+    float: right;
+    padding: 0;
+  }
 }
 
 .project-info-card {

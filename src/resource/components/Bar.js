@@ -24,7 +24,7 @@ class BarChart extends React.Component {
       { product: "椰汁", year: "2018", sales: 21.2 }
     ],
     dataFields: { row: "year", value: "sales", text: "product" },
-    size: ["100%", 200],
+    size: ["100%", 160],
     forceFit: true
   };
 

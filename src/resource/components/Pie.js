@@ -17,7 +17,7 @@ class PieChart extends React.Component {
       { value: 3100, label: "邮件营销" }
     ],
     dataFields: { row: "label", value: "value" },
-    size: ["100%", 200],
+    size: ["100%", 160],
     radius: 0.6,
     forceFit: true
   };
