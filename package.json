@@ -116,7 +116,7 @@
   },
   "dependencies": {
     "@antv/data-set": "^0.10.2",
-    "@qcharts/react": "0.0.4",
+    "@qcharts/react": "0.0.5",
     "antd": "^3.17.0",
     "bizcharts": "^3.5.2",
     "electron-store": "^3.2.0",
