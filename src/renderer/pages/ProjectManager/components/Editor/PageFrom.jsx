@@ -12,7 +12,7 @@ import {
   Radio,
   message
 } from "antd";
-import { createPageForProject } from "../../../api";
+import { createPageForProject } from "../../../../api/";
 
 class PageFrom extends React.Component {
   state = { showLoading: false };
@@ -27,25 +27,29 @@ class PageFrom extends React.Component {
     });
   };
 
-  // componentWillUnmount() {
-  //   this.setState({ showLoading: falsee });
-  // }
-
   handleOk = e => {
     e.preventDefault();
     this.props["form"].validateFields((err, values) => {
       if (!err) {
         this.setState({ showLoading: true });
 
+        console.log(this.props.components);
+
         createPageForProject({
           ...values,
-          components: this.props.page,
+          components: this.props.components,
           path: this.props.project.path
-        }).then(() => {
-          this.setState({ showLoading: false });
-          message.success("新建页面成功");
-          this.handleCancel();
-        });
+        })
+          .then(() => {
+            this.setState({ showLoading: false });
+            message.success("新建页面成功");
+            this.handleCancel();
+            this.props.form.resetFields();
+          })
+          .catch(e => {
+            this.setState({ showLoading: false });
+            message.error("新建页面失败");
+          });
       }
     });
   };

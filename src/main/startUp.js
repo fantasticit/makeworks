@@ -3,13 +3,12 @@ import { app, BrowserWindow } from "electron";
 export default function startUp() {
   return new Promise((resolve, reject) => {
     let mainWindow = null;
-
     let port = process.env.DEV_PORT || 8080;
 
     app.on("ready", () => {
       mainWindow = new BrowserWindow({
-        width: 1296,
-        height: 768,
+        width: 1096,
+        height: 685,
         show: false
       });
 
@@ -26,7 +25,6 @@ export default function startUp() {
 
         mainWindow.show();
         mainWindow.focus();
-
         resolve();
       });
 

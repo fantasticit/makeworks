@@ -1,7 +1,6 @@
 import fs from "fs-extra";
 import path from "path";
-
-const isProd = process.env.NODE_ENV === "production";
+import { isProd } from "./utils";
 
 const rootPath = isProd
   ? path.resolve(__dirname, "../../src/resource/templates/")

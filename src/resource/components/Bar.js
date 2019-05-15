@@ -1,11 +1,11 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Chart, Bar, Axis, Legend, Tooltip } from "@qcharts/react";
 
 class BarChart extends React.Component {
   static componentInfo = {
-    title: "柱状图图",
-    desc: "一种可视类型"
+    title: "柱状图",
+    desc: "来自 @qcharts/react",
+    dependencies: ["@qcharts/react"]
   };
 
   static defaultProps = {
@@ -29,7 +29,6 @@ class BarChart extends React.Component {
   };
 
   render() {
-    // 模拟数据，使用请替换
     const {
       data = [],
       dataFields = {},

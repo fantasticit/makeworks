@@ -18,7 +18,6 @@ export const routes = [
     path: "/templates",
     title: "模板",
     icon: "appstore",
-    color: "#eb2f96",
     component: Templates
   },
 
@@ -26,7 +25,6 @@ export const routes = [
     path: "/components",
     title: "组件",
     icon: "build",
-    color: "#52c41a",
     component: Components
   },
 

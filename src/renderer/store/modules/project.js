@@ -23,12 +23,24 @@ export function createProject({ template, project }) {
   };
 }
 
+export function deleteProject(project) {
+  return { type: "DELETE_PROJECT", payload: project };
+}
+
 export default function(state = initialState, action) {
   switch (action.type) {
     case "ADD_PROJECT":
       return {
         ...state,
         projects: [...new Set([...state.projects, action.payload])]
+      };
+
+    case "DELETE_PROJECT":
+      const project = action.payload;
+      const projects = state.projects;
+      return {
+        ...state,
+        projects: projects.filter(d => d.path !== project.path)
       };
 
     default:

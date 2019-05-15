@@ -1,10 +1,9 @@
 import React from "react";
-import { Card, Col, Row, Layout, Button, Input } from "antd";
+import { Card, Col, Row, Layout, Button } from "antd";
 import * as Components from "../../../resource/components/index";
 import "./style.scss";
 
 const { Header, Content } = Layout;
-const Search = Input.Search;
 
 export default class extends React.Component {
   render() {
@@ -26,7 +25,6 @@ export default class extends React.Component {
                 <Row gutter={16} key={i}>
                   {components.map(type => {
                     let Target = Components[type];
-
                     const info = Target.componentInfo || { title: undefined };
 
                     return (

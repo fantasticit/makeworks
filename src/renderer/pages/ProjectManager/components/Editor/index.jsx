@@ -3,7 +3,7 @@ import { Card, Button, Icon, Drawer } from "antd";
 import JSONEditor from "jsoneditor";
 import "jsoneditor/dist/jsoneditor.min.css";
 import PageForm from "./PageFrom";
-import * as Components from "../../../../resource/components/index";
+import * as Components from "../../../../../resource/components/index";
 import "./style.scss";
 
 export default class PageGenerator extends React.Component {
@@ -49,6 +49,7 @@ export default class PageGenerator extends React.Component {
     const WrappedComponent = {
       key,
       type,
+      info,
       props: defaultProps,
       Instance: props => <TargetComponnet key={key} {...props} />
     };
@@ -66,8 +67,8 @@ export default class PageGenerator extends React.Component {
           this.setState({ currentDragComponent: WrappedComponent });
         }}
         onClick={() => this.addSelectedComponents(WrappedComponent)}
+        title={info.title}
         bordered={true}
-        // title={info.title}
       >
         <TargetComponnet />
       </Card>
@@ -75,7 +76,7 @@ export default class PageGenerator extends React.Component {
   };
 
   createPreviewComponent = (Component, parentKey = null) => {
-    const isPreview = this.state.isPreview
+    const isPreview = this.state.isPreview;
     const hasChildren = Component.children;
     const key = parentKey ? parentKey + "_" + Component.key : Component.key;
 
@@ -95,7 +96,11 @@ export default class PageGenerator extends React.Component {
     return hasChildren ? (
       <Component.Instance key={key} {...Component.props}>
         <div
-          className={!isPreview ? "canary-render-component-wrapper is-inner" : "canary-render-component-wrapper is-inner is-preview"}
+          className={
+            !isPreview
+              ? "component-render-wrapper is-inner"
+              : "component-render-wrapper is-inner is-preview"
+          }
           id={key}
           onDragOver={e => {
             e.stopPropagation();
@@ -109,6 +114,7 @@ export default class PageGenerator extends React.Component {
             this.setState({ currentComponent: null });
           }}
           onClick={onClick}
+          data-info={Component.info.title}
         >
           {Component.children.map((child, i) =>
             this.createPreviewComponent(child, key + "_" + i)
@@ -118,7 +124,12 @@ export default class PageGenerator extends React.Component {
     ) : (
       <div
         key={key}
-        className={!isPreview ? "canary-render-component-wrapper" : "canary-render-component-wrapper is-preview"}
+        className={
+          !isPreview
+            ? "component-render-wrapper"
+            : "component-render-wrapper is-preview"
+        }
+        data-info={Component.info.title}
         onClick={onClick}
       >
         <Component.Instance {...Component.props} />
@@ -155,7 +166,7 @@ export default class PageGenerator extends React.Component {
   };
 
   render() {
-    const { project } = this.props
+    const { project } = this.props;
 
     return (
       <Drawer
@@ -167,7 +178,7 @@ export default class PageGenerator extends React.Component {
           this.props.onClose();
         }}
       >
-        <div className="container">
+        <div className="editor">
           <header>
             <div>
               <p>
@@ -176,16 +187,35 @@ export default class PageGenerator extends React.Component {
             </div>
 
             <div>
-              <Button icon="eye" onClick={() => this.setState({ isPreview: !this.state.isPreview })}>预览</Button>
-              <Button type="primary" icon="plus" onClick={this.generatePage}>生成</Button>
+              <Button
+                icon="eye"
+                onClick={() =>
+                  this.setState({ isPreview: !this.state.isPreview })
+                }
+              >
+                预览
+              </Button>
+              <Button type="primary" icon="plus" onClick={this.generatePage}>
+                生成
+              </Button>
             </div>
           </header>
 
           <main>
-            
+            {/* S 组件选择面板 */}
+            <div className="editor-components">
+              <header>
+                <h3>添加组件</h3>
+                <Icon type="close" />
+              </header>
+              <main>
+                {Object.keys(Components).map(this.createAddableComponnet)}
+              </main>
+            </div>
+            {/* E 组件选择面板 */}
 
             {/* S 页面预览 */}
-            <div className="preview-box">
+            <div className="editor-preview">
               <header className="preview-box__toolbar">
                 <h3>页面预览</h3>
                 <Button
@@ -201,7 +231,6 @@ export default class PageGenerator extends React.Component {
               </header>
 
               <main
-                className="preview-box__content"
                 onDragOver={e => {
                   e.stopPropagation();
                   e.preventDefault();
@@ -220,21 +249,8 @@ export default class PageGenerator extends React.Component {
             </div>
             {/* E 页面预览 */}
 
-
-            {/* S 组件选择面板 */}
-            <div className="component-panel">
-              <header>
-                <h3>添加组件</h3>
-                <Icon type="close" />
-              </header>
-              <main>
-                {Object.keys(Components).map(this.createAddableComponnet)}
-              </main>
-            </div>
-            {/* E 组件选择面板 */}
-
             {/* S JSON 编辑器 */}
-            <div className="preview-component-editor-container">
+            <div className="editor-component-editor">
               <header>
                 <h3>组件编辑器</h3>
                 <Icon type="close" />
@@ -248,7 +264,7 @@ export default class PageGenerator extends React.Component {
         <PageForm
           visible={this.state.showModal}
           project={this.props.project}
-          page={this.state.selectedComponents}
+          components={this.state.selectedComponents}
           toggleShowModal={this.toggleShowModal}
         />
       </Drawer>

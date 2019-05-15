@@ -1,5 +1,9 @@
 .component-card {
-  box-shadow: 0 6px 14px 0 rgba(26,26,26,.06);
+  box-shadow: 0 6px 14px 0 rgba(26, 26, 26, 0.06);
+
+  &:hover {
+    box-shadow: 0 5px 50px 0 rgba(0, 0, 0, 0.1);
+  }
 }
 
 .component-card .ant-card-body {

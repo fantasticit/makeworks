@@ -1,4 +1,18 @@
-@import "antd/dist/antd.css";
+@import "~antd/dist/antd.less";
+
+@primary-color: #ff9f00; // 全局主色
+@link-color: rgba(0, 0, 0, 0.45); // 链接色
+@success-color: #ff9f00; // 成功色
+@warning-color: #faad14; // 警告色
+@error-color: #f5222d; // 错误色
+@font-size-base: 14px; // 主字号
+@heading-color: rgba(0, 0, 0, 0.85); // 标题色
+@text-color: rgba(0, 0, 0, 0.65); // 主文本色
+@text-color-secondary : rgba(0, 0, 0, .45); // 次文本色
+@disabled-color : rgba(0, 0, 0, .25); // 失效色
+@border-radius-base: 4px; // 组件/浮层圆角
+@border-color-base: #d9d9d9; // 边框色
+@box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // 浮层阴影
 
 img {
   display: inline-block;
@@ -10,7 +24,7 @@ p {
   margin: 0;
 }
 
-.none {
+.empty {
   width: 75px;
   display: flex;
   flex-direction: column;
@@ -39,12 +53,11 @@ p {
     justify-content: space-between;
     padding: 15px;
     background: #fff;
-    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    box-shadow: 0 1px 3px rgba(26, 26, 26, 0.1);
 
     h1 {
       margin: 0;
     }
-
   }
 
   > main {

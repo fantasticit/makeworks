@@ -1,22 +1,21 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Row } from "antd";
 
 class Div extends React.Component {
   static componentInfo = {
-    title: "Row",
-    desc: "单行布局容器"
+    title: "行",
+    desc: "单行布局容器",
+    dependencies: ["antd"]
   };
 
   static defaultProps = {
     gutter: 0,
-    height: 240,
+    height: 200,
     backgroundColor: "transparent",
     children: []
   };
 
   render() {
-    // 模拟数据，使用请替换
     const { gutter, height, backgroundColor, children } = this.props;
     return (
       <Row

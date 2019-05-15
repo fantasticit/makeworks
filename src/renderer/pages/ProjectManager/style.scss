@@ -1,0 +1,17 @@
+// 头部组件样式
+.ant-page-header .ant-page-header-content-view {
+  float: right;
+  padding: 0;
+}
+
+.project-info-card {
+  .ant-card-body {
+    height: 320px;
+    overflow: auto;
+  }
+
+  .ant-list-item {
+    display: flex;
+    justify-content: space-between;
+  }
+}

@@ -3,9 +3,10 @@
   border: 1px solid #ddd;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 5px 50px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 14px 0 rgba(26, 26, 26, 0.06);
   overflow: hidden;
   cursor: pointer;
+  margin-top: 15px;
   transition: all ease-in-out 0.3s;
 
   .template-content {
@@ -38,6 +39,6 @@
   }
 
   &:hover {
-    border-color: #1890ff;
+    box-shadow: 0 5px 50px 0 rgba(0, 0, 0, 0.1);
   }
 }

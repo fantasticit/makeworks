@@ -1,11 +1,13 @@
 import fs from "fs-extra";
 import path from "path";
 
+export const isProd = process.env.NODE_ENV === "production";
+
 export function getTime() {
   const now = new Date();
-  const f = n => (n < 10 ? "0 " + n : n);
+  const f = n => (n < 10 ? "0" + n : n);
 
-  return `${now.getFullYear()}年${now.getMonth()}月${now.getDate()}日 ${f(
+  return `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${f(
     f(now.getHours())
   )}:${f(now.getMinutes())}`;
 }

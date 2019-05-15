@@ -1,14 +1,17 @@
 import React from "react";
-import { PageHeader, Card, Col, Row, Button, Tabs, List } from "antd";
-import PageGenerator from "./components/PageGenerator";
+import { Col, Row, message } from "antd";
+import Editor from "./components/Editor";
+import Header from "./components/Header";
+import DependenciesCard from "./components/DependeciesCard";
+import PagesCard from "./components/PagesCard";
 import { getProjectInfo } from "../../api";
 
-const TabPane = Tabs.TabPane;
+import "./style.scss";
 
 export default class extends React.Component {
   state = { showEditor: false };
 
-  toggleShowEditor = () => {
+  toggleEditor = () => {
     this.setState({ showEditor: !this.state.showEditor });
   };
 
@@ -39,9 +42,11 @@ export default class extends React.Component {
   };
 
   getProjectInfo = () => {
-    getProjectInfo(this.state).then(ret => {
-      this.setState(ret);
-    });
+    getProjectInfo(this.state)
+      .then(ret => {
+        this.setState(ret);
+      })
+      .catch(e => message.error("同步信息失败"));
   };
 
   componentWillMount() {
@@ -52,109 +57,58 @@ export default class extends React.Component {
     this.getInfoFromHistory();
   }
 
-  // componentWillUpdate() {
-  //   this.getProjectInfo();
-  // }
-
   render() {
     const {
+      version,
+      scripts,
       name,
       path,
       devDependencies = [],
       dependencies = [],
-      pages
+      pages,
+      showEditor
     } = this.state;
 
     return (
       <>
-        <PageHeader onBack={this.goback} title={name} subTitle={path} />
+        {/* 页头 */}
+        <Header name={name} path={path} onBack={this.goback} />
 
         <main>
-          {/* S 页面生成器 */}
-          <PageGenerator
-            project={this.state}
-            visible={this.state.showEditor}
+          <Row>
+            <Col>
+              <p>
+                项目版本号 <strong>{version}</strong>
+              </p>
+            </Col>
+          </Row>
+
+          <Editor
+            project={{ name, path, dependencies, devDependencies }}
+            visible={showEditor}
             onClose={() => {
-              this.toggleShowEditor();
+              this.toggleEditor();
               this.getProjectInfo();
             }}
           />
-          {/* E 页面生成器*/}
 
           <Row gutter={16}>
-            <Col span={8}>
-              <Card
-                key={"项目依赖"}
-                title="项目依赖"
-                extra={[
-                  <Button
-                    shape="circle"
-                    icon="sync"
-                    onClick={this.getProjectInfo}
-                  />,
-                  <Button
-                    style={{ marginLeft: 10 }}
-                    type="primary"
-                    shape="circle"
-                    icon="plus"
-                  />
-                ]}
-              >
-                <Tabs defaultActiveKey="1">
-                  {[
-                    { key: 1, data: dependencies, title: "dependencies" },
-                    {
-                      key: 2,
-                      data: devDependencies,
-                      title: "devDependencies"
-                    }
-                  ].map(({ key, title, data }) => (
-                    <TabPane tab={<span>{title}</span>} key={key}>
-                      <List
-                        dataSource={Object.keys(data)}
-                        renderItem={item => (
-                          <List.Item key={item}>
-                            {item + ": " + data[item]}
-                          </List.Item>
-                        )}
-                      />
-                    </TabPane>
-                  ))}
-                </Tabs>
-              </Card>
+            <Col span={12}>
+              {/* 依赖卡片 */}
+              <DependenciesCard
+                dependencies={dependencies}
+                devDependencies={devDependencies}
+                onSync={this.getProjectInfo}
+              />
             </Col>
 
-            {[{ title: "页面", data: pages }].map(({ title, data }) => {
-              return (
-                <Col span={8} key={title}>
-                  <Card
-                    key={title}
-                    title={title}
-                    extra={[
-                      <Button
-                        shape="circle"
-                        icon="sync"
-                        onClick={this.getProjectInfo}
-                      />,
-                      <Button
-                        style={{ marginLeft: 10 }}
-                        type="primary"
-                        shape="circle"
-                        icon="plus"
-                        onClick={this.toggleShowEditor}
-                      />
-                    ]}
-                  >
-                    <List
-                      dataSource={data}
-                      renderItem={item => (
-                        <List.Item key={item.path}>{item.name}</List.Item>
-                      )}
-                    />
-                  </Card>
-                </Col>
-              );
-            })}
+            <Col span={12}>
+              <PagesCard
+                pages={pages}
+                onSync={this.getProjectInfo}
+                onAddPage={this.toggleEditor}
+              />
+            </Col>
           </Row>
         </main>
       </>

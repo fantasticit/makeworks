@@ -1,0 +1,9 @@
+.setting-col {
+  padding: 8px 5%;
+  display: flex;
+  justify-content: space-between;
+
+  .ant-divider-horizontal {
+    margin-top: 8px !important;
+  }
+}

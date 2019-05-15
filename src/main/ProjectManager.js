@@ -1,9 +1,9 @@
 import fs from "fs-extra";
 import { join, resolve } from "path";
 import { capitalize } from "../shared/utils";
-import { readDir } from "./utils";
+import { isProd, readDir } from "./utils";
 
-const isProd = process.env.NODE_ENV === "production";
+const source = require("../../package.json");
 
 const componentsRootPath = isProd
   ? resolve(__dirname, "../../src/resource/components/")
@@ -31,7 +31,6 @@ export default class ProjectManager {
    */
   getPkgJSON() {
     const file = join(this.rootPath, "./package.json");
-    console.log(file, this.rootPath, fs.readJsonSync(file));
     return fs.readJsonSync(file);
   }
 
@@ -162,9 +161,19 @@ export default class ${pageName} extends React.Component {
 
     // 遍历新页面所用到的组件，提取组件类型
     let components = [];
+    let dependencies = [];
     const getComponents = data => {
+      if (!data) {
+        return [];
+      }
+
       data.forEach(d => {
-        const { type, children } = d;
+        const { type, children, info } = d;
+
+        if (info.dependencies) {
+          dependencies.push.apply(dependencies, info.dependencies);
+        }
+
         components.push(capitalize(type));
         if (children && children.length) {
           getComponents(children);
@@ -173,9 +182,25 @@ export default class ${pageName} extends React.Component {
     };
     getComponents(data);
     components = [...new Set(components)];
+    dependencies = [...new Set(dependencies)];
 
     await this._createNewPageIndexFile(pageName, components, data, pageDirPath);
     await this._createNewPageComponentFiles(components, componentsPath);
+    this.updateDependencies(dependencies);
+  }
+
+  updateDependencies(dependencies) {
+    const json = this.getPkgJSON();
+    const target = source.dependencies;
+    let newInfo = Object.assign(
+      {},
+      json.dependencies,
+      dependencies.reduce((a, c) => {
+        a[c] = target[c];
+        return a;
+      }, Object.create(null))
+    );
+    this.updatePkgJSON({ dependencies: newInfo });
   }
 
   /**

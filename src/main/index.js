@@ -1,8 +1,9 @@
 import { ipcMain } from "electron";
+import fs from "fs-extra";
+import startUp from "./startUp";
 import createProject from "./createProject";
 import readTemplates from "./templateServer";
 import ProjectManager from "./ProjectManager";
-import startUp from "./startUp";
 
 startUp().then(() => {
   let templates = [];
@@ -63,6 +64,8 @@ startUp().then(() => {
       let pages = await manager.getDirInfo("pages");
 
       evt.sender.send("success", {
+        version: json.version,
+        scripts: json.scripts,
         dependencies: json.dependencies || [],
         devDependencies: json.devDependencies || [],
         pages
@@ -80,6 +83,17 @@ startUp().then(() => {
       evt.sender.send("success");
     } catch (e) {
       console.log("为项目新建页面失败", e);
+      evt.sender.send("error", e);
+    }
+  });
+
+  // 删除文件
+  ipcMain.on("delete:file", async (evt, arg) => {
+    try {
+      await fs.remove(arg.path || arg);
+      evt.sender.send("success");
+    } catch (e) {
+      console.log("删除文件失败", arg, e);
       evt.sender.send("error", e);
     }
   });

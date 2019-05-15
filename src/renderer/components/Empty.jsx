@@ -3,7 +3,7 @@ import None from "../assets/empty.png";
 
 export default () => {
   return (
-    <div className="none">
+    <div className="empty">
       <img src={None} alt="none" />
     </div>
   );

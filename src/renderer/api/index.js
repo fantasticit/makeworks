@@ -1,5 +1,9 @@
 import ipc from "./ipc";
 
+export function deleteFile(path) {
+  return ipc("delete:file", path);
+}
+
 export function getTemplates() {
   return ipc("get:templates");
 }

@@ -36,6 +36,30 @@ module.exports = {
       },
 
       {
+        test: /\.(l)?ess$/,
+        use: [
+          "css-hot-loader",
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: "../"
+            }
+          },
+          "css-loader?importLoaders=1",
+          {
+            loader: "postcss-loader",
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: "less-loader",
+            options: { javascriptEnabled: true }
+          }
+        ]
+      },
+
+      {
         test: /\.jsx?$/,
         use: [
           "cache-loader",

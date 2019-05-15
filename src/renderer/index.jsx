@@ -9,6 +9,8 @@ import App from "./App";
 
 const { store, persist } = createStore();
 
+console.log(persist, store);
+
 ReactDOM.render(
   <AppContainer>
     <BrowserRouter basename="/">

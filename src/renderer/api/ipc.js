@@ -7,8 +7,7 @@ export default function ipc(type, arg) {
     });
 
     ipcRenderer.once("error", (_, arg) => {
-      document.write(e.message || e);
-      reject(e);
+      reject(arg);
     });
 
     ipcRenderer.send(type, arg);

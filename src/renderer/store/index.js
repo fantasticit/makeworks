@@ -1,18 +1,17 @@
 import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import { persistStore, persistReducer } from "redux-persist";
-// import createElectronStorage from "redux-persist-electron-storage"; // defaults to localStorage for web and AsyncStorage for react-native
-import storage from "redux-persist/lib/storage";
-
+import createElectronStorage from "./storage";
 import rootReducer from "./modules";
+
+export const storage = createElectronStorage();
 
 const persistConfig = {
   key: "root",
-  storage
+  storage: storage
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
-
 export default function() {
   let store = createStore(persistedReducer, applyMiddleware(thunk));
   let persist = persistStore(store);

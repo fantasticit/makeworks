@@ -2,19 +2,33 @@ import React from "react";
 import { NavLink, withRouter } from "react-router-dom";
 import { Layout, Menu, Icon } from "antd";
 import { routes } from "../router";
-import Logo from "./logo.png";
+import Logo from "../assets/logo.png";
 import "./style.scss";
 
 const { Sider } = Layout;
 
 class Container extends React.Component {
   state = {
-    collapsed: false
+    collapsed: true
   };
 
   onCollapse = collapsed => {
     this.setState({ collapsed });
   };
+
+  componentDidMount() {
+    window.addEventListener(
+      "keydown",
+      e => {
+        const keyCode = e.keyCode || e.which || e.charCode;
+        const ctrlKey = e.ctrlKey || e.metaKey;
+        if (ctrlKey && keyCode == 66) {
+          this.onCollapse(!this.state.collapsed);
+        }
+      },
+      false
+    );
+  }
 
   render() {
     const { history } = this.props;
@@ -24,12 +38,12 @@ class Container extends React.Component {
       <Layout style={{ minHeight: "100vh" }}>
         <Sider
           // collapsible
-          // collapsed={this.state.collapsed}
-          // onCollapse={this.onCollapse}
+          collapsed={this.state.collapsed}
+          onCollapse={this.onCollapse}
         >
           <div className="logo">
             <img src={Logo} alt="logo" />
-            <h1>Canary</h1>
+            <h1>Makeworks</h1>
           </div>
           <Menu selectedKeys={[pathname]} mode="inline">
             {routes.map(route => (
