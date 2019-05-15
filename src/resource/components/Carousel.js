@@ -14,7 +14,9 @@ class Div extends React.Component {
 
   render() {
     return (
-      <Carousel style={{ height: "100%" }}>{this.props.children}</Carousel>
+      <Carousel style={{ height: "100%", minHeight: 160 }}>
+        {this.props.children}
+      </Carousel>
     );
   }
 }

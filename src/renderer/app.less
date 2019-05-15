@@ -14,6 +14,22 @@
 @border-color-base: #d9d9d9; // 边框色
 @box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // 浮层阴影
 
+* {
+  &::-webkit-scrollbar {
+    width: 6px;
+    background: #f7f6f6;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 0px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background: #e2e2e2;
+  }
+}
+
 img {
   display: inline-block;
   width: 100%;
