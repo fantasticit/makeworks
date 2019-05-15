@@ -33,7 +33,7 @@ export default function startUp() {
 
     app.on(
       "window-all-close",
-      () => process.platform !== "darwin" && app.quit()
+      () => app.quit() // process.platform !== "darwin" &&
     );
   });
 }

@@ -23,7 +23,7 @@ export function runExec({
 }
 
 export function notify({ title, ...other }) {
-  return new Notification(title, { ...other, icon: logo });
+  return new Notification(title, { ...other });
 }
 
 export function openTerminal(terminal, command) {

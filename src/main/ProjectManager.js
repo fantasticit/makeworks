@@ -68,9 +68,16 @@ export default class ProjectManager {
    */
   async _createNewPageIndexFile(pageName, components, data, rootPath) {
     // 新页面 index.js 内容
-    const generateRenderJSX = (type, props, children, spaces = 6) => {
-      delete props.children;
-      let str = `<${type} {...${JSON.stringify(props, null, spaces)}}>`;
+    const generateRenderJSX = (
+      type,
+      props = null,
+      children = null,
+      spaces = 6
+    ) => {
+      props && delete props.children;
+      let str = !props
+        ? `<${type} />`
+        : `<${type} {...${JSON.stringify(props, null, spaces)}}>`;
       if (children && children.length) {
         children.map(child => {
           const { type, props, children } = child;
@@ -200,7 +207,7 @@ export default class ${pageName} extends React.Component {
         return a;
       }, Object.create(null))
     );
-    this.updatePkgJSON({ dependencies: newInfo });
+    newInfo && this.updatePkgJSON({ dependencies: newInfo });
   }
 
   /**
