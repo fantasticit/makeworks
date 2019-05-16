@@ -96,7 +96,7 @@ class Header extends React.Component {
 
                 notification.open({
                   key,
-                  message: "正在运行服务",
+                  message: "正在启动服务",
                   description: "请耐心等待...",
                   icon,
                   duration: 0
