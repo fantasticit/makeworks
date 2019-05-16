@@ -40,13 +40,13 @@ startUp().then(() => {
   // 项目管理
   const pool = new Map();
 
-  const getManager = path => {
+  const getManager = (name, path) => {
     let manager = null;
 
     if (pool.has(path)) {
       manager = pool.get(path);
     } else {
-      manager = new ProjectManager();
+      manager = new ProjectManager(name);
       manager.setRootPath(path);
       pool.set(path, manager);
     }
@@ -56,10 +56,10 @@ startUp().then(() => {
 
   // 获取项目信息
   ipcMain.on("project:info", async (evt, arg) => {
-    const { path } = arg;
+    const { name, path } = arg;
 
     try {
-      let manager = getManager(path);
+      let manager = getManager(name, path);
       let json = manager.getPkgJSON();
       let pages = await manager.getDirInfo("pages");
 
@@ -77,8 +77,10 @@ startUp().then(() => {
   });
 
   ipcMain.on("project:createPage", async (evt, arg) => {
+    const { name, path } = arg.project;
+
     try {
-      let manager = getManager(arg.path);
+      let manager = getManager(name, path);
       await manager.generateNewPage(arg);
       evt.sender.send("success");
     } catch (e) {

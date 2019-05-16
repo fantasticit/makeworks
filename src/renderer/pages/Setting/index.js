@@ -11,9 +11,9 @@ import {
 } from "antd";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { storage } from "../../store";
+import { storage } from "../../store/index";
 import { changeEditor, changeTerminal } from "../../store/modules/setting";
-import { notify } from "../../shell";
+import { notify } from "../../shell/index";
 
 import "./style.scss";
 

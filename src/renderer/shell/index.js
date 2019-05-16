@@ -1,4 +1,4 @@
-import { shell } from "electron";
+import { shell, clipboard } from "electron";
 import { exec } from "child_process";
 import logo from "../assets/logo.png";
 
@@ -9,17 +9,27 @@ export function runExec({
   command,
   onData = noop,
   onError = noop,
-  onClose = noop,
-  onExit = noop
+  onExit = noop,
+  onClose = noop
 }) {
   workerProcess = exec(command);
 
   workerProcess.once("exit", onExit);
   workerProcess.once("error", onError);
+  workerProcess.on("close", onClose);
 
   workerProcess.stdout.on("data", onData);
   workerProcess.stdout.on("error", onError);
   workerProcess.stdout.on("close", onClose);
+}
+
+export function copy(value) {
+  if (!value) {
+    return;
+  }
+
+  clipboard.writeText(value);
+  notify({ title: "复制成功", body: "已成功复制文字到剪切板" });
 }
 
 export function notify({ title, ...other }) {

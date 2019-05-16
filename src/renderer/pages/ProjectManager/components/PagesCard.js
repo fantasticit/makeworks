@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Button, List, Tooltip, Icon, Popconfirm, message } from "antd";
-import { deleteFile } from "../../../api";
-import { openFileFolder } from "../../../shell";
+import { deleteFile } from "../../../api/index";
+import { openFileFolder } from "../../../shell/index";
 
 export default class extends React.Component {
   render() {

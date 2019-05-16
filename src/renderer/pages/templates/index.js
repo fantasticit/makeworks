@@ -15,7 +15,7 @@ import { connect } from "react-redux";
 import { getTemplates } from "../../store/modules/template";
 import { createProject } from "../../store/modules/project";
 import Empty from "../../components/Empty";
-import { notify } from "../../shell";
+import { notify } from "../../shell/index";
 import "./style.scss";
 
 const { Header } = Layout;

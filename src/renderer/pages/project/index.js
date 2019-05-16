@@ -15,7 +15,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { deleteProject } from "../../store/modules/project";
 import Empty from "../../components/Empty";
-import { deleteFile } from "../../api";
+import { deleteFile } from "../../api/index";
 import "./style.scss";
 
 class Project extends React.Component {

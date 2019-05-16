@@ -20,3 +20,39 @@
     justify-content: space-between;
   }
 }
+
+.ant-layout > main.project {
+  padding-top: 50px;
+}
+
+.ant-alert.ant-alert-closable {
+  margin: 10px 0;
+}
+
+.ant-notification-notice-with-icon .ant-notification-notice-description {
+  margin-left: 62px !important;
+}
+
+.ant-row.project-sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  padding: 10px 24px;
+  background: #f7f7f7;
+  font-size: 0.9em;
+
+  > div {
+    display: flex;
+    align-items: center;
+
+    &:last-child {
+      justify-content: flex-end;
+    }
+  }
+}

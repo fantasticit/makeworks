@@ -1,7 +1,12 @@
 import React from "react";
 import { PageHeader, Button, Tooltip } from "antd";
 import { connect } from "react-redux";
-import { openFileFolder, runExec, openTerminal, notify } from "../../../shell";
+import {
+  openFileFolder,
+  runExec,
+  openTerminal,
+  notify
+} from "../../../shell/index";
 
 class Header extends React.Component {
   render() {

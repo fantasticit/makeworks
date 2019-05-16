@@ -12,7 +12,7 @@ import {
   Radio,
   message
 } from "antd";
-import { createPageForProject } from "../../../../api/";
+import { createPageForProject } from "../../../../api/index";
 
 class PageFrom extends React.Component {
   state = { showLoading: false };
@@ -38,7 +38,7 @@ class PageFrom extends React.Component {
         createPageForProject({
           ...values,
           components: this.props.components,
-          path: this.props.project.path
+          project: this.props.project
         })
           .then(() => {
             this.setState({ showLoading: false });

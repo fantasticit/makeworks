@@ -1,10 +1,11 @@
 import React from "react";
-import { Col, Row, message } from "antd";
-import Editor from "./components/Editor";
+import { Col, Row, Alert, message } from "antd";
+import Editor from "./components/Editor/index";
 import Header from "./components/Header";
+import SubHeader from "./components/SubHeader";
 import DependenciesCard from "./components/DependeciesCard";
 import PagesCard from "./components/PagesCard";
-import { getProjectInfo } from "../../api";
+import { getProjectInfo } from "../../api/index";
 
 import "./style.scss";
 
@@ -60,7 +61,7 @@ export default class extends React.Component {
   render() {
     const {
       version,
-      scripts,
+      scripts = [],
       name,
       path,
       devDependencies = [],
@@ -72,16 +73,15 @@ export default class extends React.Component {
     return (
       <>
         {/* 页头 */}
-        <Header name={name} path={path} onBack={this.goback} />
+        <Header
+          name={name}
+          path={path}
+          scripts={scripts}
+          onBack={this.goback}
+        />
 
-        <main>
-          <Row>
-            <Col>
-              <p>
-                项目版本号 <strong>{version}</strong>
-              </p>
-            </Col>
-          </Row>
+        <main className="project">
+          <SubHeader scripts={scripts} version={version} path={path} />
 
           <Editor
             project={{ name, path, dependencies, devDependencies }}
@@ -91,6 +91,12 @@ export default class extends React.Component {
               this.getProjectInfo();
             }}
           />
+
+          {/* <Alert
+            message="添加新页面之后，需要更新项目路由，才可运行服务。"
+            type="warning"
+            closable
+          /> */}
 
           <Row gutter={16}>
             <Col span={12}>

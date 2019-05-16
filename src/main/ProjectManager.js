@@ -1,7 +1,6 @@
 import fs from "fs-extra";
 import { join, resolve } from "path";
-import { capitalize } from "../shared/utils";
-import { isProd, readDir } from "./utils";
+import { isProd, readDir, capitalize } from "./utils";
 
 const source = require("../../package.json");
 
@@ -9,8 +8,13 @@ const componentsRootPath = isProd
   ? resolve(__dirname, "../../src/resource/components/")
   : resolve(__dirname, `../resource/components/`);
 
+const projectConfigJSONPath = isProd
+  ? resolve(__dirname, "../../src/resource/project.config.json")
+  : resolve(__dirname, `../resource/project.config.json`);
+
 export default class ProjectManager {
-  constructor() {
+  constructor(name) {
+    this.name = name;
     this.rootPath = null; // 项目根目录
   }
 
@@ -76,7 +80,7 @@ export default class ProjectManager {
     ) => {
       props && delete props.children;
       let str = !props
-        ? `<${type} />`
+        ? `<${type}>`
         : `<${type} {...${JSON.stringify(props, null, spaces)}}>`;
       if (children && children.length) {
         children.map(child => {
@@ -125,20 +129,29 @@ export default class ${pageName} extends React.Component {
       const componentPath = join(rootPath, "/" + componentName);
       await fs.ensureDir(componentPath); // 创建组件文件夹
 
+      let isDir = false;
+
       let componentSourcePath = join(
         componentsRootPath,
         `./${componentName}.js`
       );
 
       if (!fs.existsSync(componentSourcePath)) {
-        componentName = join(componentsRootPath, `./${componentName}/index.js`);
+        componentName = join(componentsRootPath, `./${componentName}`);
+        isDir = true;
       }
 
       if (!fs.existsSync(componentSourcePath)) {
-        throw new Error(`找不到项目所需组件 ${componentName} 源文件`);
+        console.error(`找不到项目所需组件 ${componentName} 源文件`);
+        return;
       }
 
-      await fs.copy(componentSourcePath, componentPath + "/index.js");
+      if (isDir) {
+        await fs.ensureDir(componentPath);
+        await fs.copy(componentSourcePath, componentPath);
+      } else {
+        await fs.copy(componentSourcePath, componentPath + "/index.js");
+      }
     };
 
     return components.map(generateComponentFile);
@@ -193,7 +206,30 @@ export default class ${pageName} extends React.Component {
 
     await this._createNewPageIndexFile(pageName, components, data, pageDirPath);
     await this._createNewPageComponentFiles(components, componentsPath);
+    this.updateRouterConfigJSON({
+      newPage: { name: pageName, router }
+    });
     this.updateDependencies(dependencies);
+  }
+
+  updateRouterConfigJSON({ newPage }) {
+    const json = fs.readJsonSync(projectConfigJSONPath);
+
+    if (!json[this.name]) {
+      json[this.name] = { pages: [], routes: {} };
+    }
+
+    const info = json[this.name];
+    info.pages = info.pages || [];
+    info.routes = info.routes || {};
+
+    info.pages.push(newPage);
+    info.pages = [...new Set(info.pages)];
+    info.routes[newPage.name] = newPage.router;
+    // Object.assign(json, { [this.name]: info });
+    fs.writeJsonSync(projectConfigJSONPath, json);
+
+    this.updateReactRouter();
   }
 
   updateDependencies(dependencies) {
@@ -215,5 +251,36 @@ export default class ${pageName} extends React.Component {
    *
    * @memberof ProjectManager
    */
-  updateReactRouter() {}
+  async updateReactRouter() {
+    const filePath = join(this.rootPath, "./src/router.js");
+    await fs.ensureFile(filePath);
+    let content = fs.readFileSync(filePath, "utf8");
+
+    if (content.length) {
+      const json = fs.readJsonSync(projectConfigJSONPath);
+      const config = json[this.name] || {};
+      let pages = config["pages"] || [];
+      pages = [...new Set(pages.map(page => page.name))];
+      const routers = config.routes || {};
+
+      const importsReg = /\/\/ IMPORTS\s*\/\/ IMPORTS/i;
+      const routesReg = /\/\/ ROUTES\s*\/\/ ROUTES/i;
+
+      const imports = pages
+        .map(page => `import ${capitalize(page)} from '${`./pages/${page}`}'`)
+        .join("\r\n");
+      content = content.replace(importsReg, imports);
+
+      const routes = pages.map(
+        page => `{ path: "${routers[page]}", component: ${capitalize(page)} }`
+      );
+      content = content.replace(
+        routesReg,
+        `export const routes = [${routes.toString()}]`
+      );
+
+      fs.outputFileSync(filePath, content);
+    } else {
+    }
+  }
 }
