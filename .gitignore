@@ -3,7 +3,6 @@
 /.cache-loader/
 node_modules/
 /dist/
-/release/
 /build/
 /coverage/
 npm-debug.log*
