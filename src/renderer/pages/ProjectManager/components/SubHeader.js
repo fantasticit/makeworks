@@ -84,7 +84,7 @@ class Header extends React.Component {
             </Button>
           </Tooltip> */}
 
-          <Tooltip title="执行 npm run start 命令，请确保您已更新项目路由">
+          <Tooltip title="执行 npm run start 命令">
             <Button
               icon="play-circle"
               type="link"

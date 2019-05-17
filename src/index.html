@@ -7,8 +7,11 @@
     <title>Makeworks</title>
   </head>
 
-  <body>
+  <body onselectstart="return false">
     <div id="root"></div>
     <script src="https://s3.ssl.qhres.com/!f868948f/spritejs.min.js"></script>
+    <script>
+      require("electron").webFrame.setVisualZoomLevelLimits(1, 1); // macos 触摸板可以缩放网页，需要限制
+    </script>
   </body>
 </html>

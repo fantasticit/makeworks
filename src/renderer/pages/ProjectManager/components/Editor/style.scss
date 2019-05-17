@@ -112,6 +112,46 @@
 }
 
 .editor-components {
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    list-style: none;
+
+    > li {
+      position: relative;
+      width: 50%;
+
+      &:nth-of-type(2n + 1) {
+        > div {
+          border-right: 0;
+        }
+      }
+
+      > div {
+        position: relative;
+        height: 160px;
+        padding: 8px;
+        overflow: hidden;
+        border-width: 1px;
+        border-style: solid;
+        border-color: rgb(235, 235, 235);
+        border-image: initial;
+      }
+
+      > p {
+        text-align: center;
+        height: 31px;
+        line-height: 31px;
+        text-align: center;
+        color: rgb(91, 107, 115);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+  }
+
   &.is-hide {
     transform: translateX(-100%);
   }
@@ -129,12 +169,12 @@
   }
 
   div.jsoneditor {
-    border-color: #ff9f00;
+    border-color: rgb(235, 235, 235);
   }
 
   div.jsoneditor-menu {
-    border-color: #ff9f00;
-    background-color: #ff9f00;
+    border-color: rgb(235, 235, 235);
+    background-color: rgb(235, 235, 235);
   }
 }
 
@@ -174,6 +214,7 @@
     padding-bottom: 30px;
 
     .component-render-wrapper {
+      position: relative;
       display: inline-block;
       width: 100%;
       height: auto;
@@ -195,13 +236,6 @@
         }
       }
 
-      &.is-preview {
-        border: 0;
-        margin: 0;
-        padding: 0 !important;
-        top: 0 !important;
-      }
-
       &::before {
         position: absolute;
         right: 5px;
@@ -214,6 +248,17 @@
 
         &::before {
           content: attr(data-info);
+        }
+      }
+
+      &.is-preview {
+        border: 0;
+        margin: 0;
+        padding: 0 !important;
+        top: 0 !important;
+
+        &::before {
+          content: "";
         }
       }
     }

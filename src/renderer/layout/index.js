@@ -7,6 +7,11 @@ import "./style.scss";
 
 const { Sider } = Layout;
 
+export const { Provider, Consumer } = React.createContext({
+  collapsed: true,
+  onCollapse: () => {}
+});
+
 class Container extends React.Component {
   state = {
     collapsed: true
@@ -56,7 +61,16 @@ class Container extends React.Component {
             ))}
           </Menu>
         </Sider>
-        <Layout>{this.props.children}</Layout>
+        <Layout>
+          <Provider
+            value={{
+              collapsed: this.state.collapsed,
+              onCollapse: this.onCollapse
+            }}
+          >
+            {this.props.children}
+          </Provider>
+        </Layout>
       </Layout>
     );
   }

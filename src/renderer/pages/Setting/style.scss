@@ -7,3 +7,56 @@
     margin-top: 8px !important;
   }
 }
+
+.setting-row {
+  display: flex !important;
+  align-items: stretch;
+}
+
+.setting-box {
+  position: relative;
+  height: 100%;
+  background: #fff;
+  padding: 15px 24px 30px;
+  border-radius: 5px;
+
+  box-shadow: 0 6px 14px 0 rgba(26, 26, 26, 0.06);
+
+  &:hover {
+    box-shadow: 0 5px 50px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .setting-box-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    > p {
+      font-size: 1.1em;
+      font-weight: 700;
+    }
+  }
+
+  .setting-box-desc {
+    font-size: 0.9em;
+    padding: 10px 0;
+  }
+
+  .setting-box-footer {
+    position: absolute;
+    bottom: 10px;
+    transform: translateX(-12px);
+    color: #999;
+    font-size: 0.8em;
+  }
+}
+
+.setting {
+  footer {
+    position: absolute;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 10px;
+  }
+}

@@ -121,7 +121,7 @@ class Template extends React.Component {
                       message: "请输入项目路径"
                     }
                   ],
-                  initialValue: "/documents/repo/"
+                  initialValue: "/documents/repo"
                 })(<Input />)}
               </Form.Item>
               <Form.Item label="名称">

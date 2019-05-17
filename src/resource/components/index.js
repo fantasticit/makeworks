@@ -1,8 +1,8 @@
 export { Row } from "./Row";
 export { Col } from "./Col";
 export { Breadcrumb } from "./Breadcrumb";
-export { Carousel } from "./Carousel/index";
 export { Steps } from "./Steps";
+export { Header } from "./Header";
 export { Footer } from "./Footer";
 
 export { Bar } from "./Bar";

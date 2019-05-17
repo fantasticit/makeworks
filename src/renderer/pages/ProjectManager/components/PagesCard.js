@@ -13,14 +13,16 @@ export default class extends React.Component {
         className="project-info-card"
         extra={[
           <Button key={"sync"} shape="circle" icon="sync" onClick={onSync} />,
-          <Button
-            key="add"
-            style={{ marginLeft: 10 }}
-            type="primary"
-            shape="circle"
-            icon="plus"
-            onClick={onAddPage}
-          />
+          <Tooltip title="添加新页面">
+            <Button
+              key="add"
+              style={{ marginLeft: 10 }}
+              type="primary"
+              shape="circle"
+              icon="plus"
+              onClick={onAddPage}
+            />
+          </Tooltip>
         ]}
       >
         <List

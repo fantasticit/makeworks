@@ -7,7 +7,8 @@
 }
 
 .component-card .ant-card-body {
-  height: 200px !important;
+  height: 240px !important;
+  overflow: auto;
 
   // display: flex;
   // align-items: center;

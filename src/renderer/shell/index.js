@@ -1,5 +1,5 @@
 import { shell, clipboard } from "electron";
-import { exec } from "child_process";
+import { get as exec } from "node-cmd";
 import logo from "../assets/logo.png";
 
 let workerProcess = null;
@@ -12,15 +12,17 @@ export function runExec({
   onExit = noop,
   onClose = noop
 }) {
-  workerProcess = exec(command);
+  exec(command, function(err, data, stderr) {
+    onClose();
 
-  workerProcess.once("exit", onExit);
-  workerProcess.once("error", onError);
-  workerProcess.on("close", onClose);
-
-  workerProcess.stdout.on("data", onData);
-  workerProcess.stdout.on("error", onError);
-  workerProcess.stdout.on("close", onClose);
+    if (err) {
+      onError(err);
+    } else {
+      onData(data);
+      onClose();
+      onExit();
+    }
+  });
 }
 
 export function copy(value) {

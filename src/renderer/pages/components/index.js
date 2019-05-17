@@ -25,17 +25,15 @@ export default class extends React.Component {
                 <Row gutter={16} key={i}>
                   {components.map(type => {
                     let Target = Components[type];
+                    const key = type + "-" + i;
                     const info = Target.componentInfo || { title: undefined };
 
                     return (
-                      <Col span={8} key={type}>
+                      <Col span={8} key={key}>
                         <Card
+                          key={key}
                           title={info.title}
                           bordered={false}
-                          actions={[
-                            <Button>复制</Button>,
-                            <Button>文档</Button>
-                          ]}
                           className="component-card"
                         >
                           <Target />
