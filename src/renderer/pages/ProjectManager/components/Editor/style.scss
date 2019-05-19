@@ -213,6 +213,11 @@
     overflow: auto;
     padding-bottom: 30px;
 
+    li {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+
     .component-render-wrapper {
       position: relative;
       display: inline-block;

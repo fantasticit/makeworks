@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Avatar,
-  Card,
   Col,
   Dropdown,
   Menu,
@@ -15,8 +14,7 @@ import {
 } from "antd";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { deleteProject } from "../../store/modules/project";
-import Empty from "../../components/Empty";
+import { changeFilter, deleteProject } from "../../store/modules/project";
 import { deleteFile } from "../../api/index";
 import { copy } from "../../shell/index";
 import "./style.scss";
@@ -48,36 +46,8 @@ const FilterMenu = ({ filter, onChangeFilter }) => {
 };
 
 class Project extends React.Component {
-  state = { filter: { by: "createAt", order: "desc" }, projects: [] };
-
-  changeFilter = filter => {
-    const projects = this.state.projects;
-
-    this.setState({
-      projects: this.sortProjects(projects, filter),
-      filter
-    });
-  };
-
-  sortProjects = (projects, filter = this.state.filter) => {
-    const { by, order } = filter;
-    return projects.sort((a, b) => {
-      let compare = a[by] - b[by];
-      return order === "desc" ? -compare : compare;
-    });
-  };
-
-  componentWillReceiveProps(props) {
-    const projects = props.projects;
-    this.setState({ projects: this.sortProjects(projects) });
-  }
-
   gotoTemplatePage = () => {
     this.props.history.push({ pathname: "/templates" });
-  };
-
-  toggleShowEditor = () => {
-    this.setState({ showEditor: !this.state.showEditor });
   };
 
   manageProject = project => {
@@ -85,8 +55,7 @@ class Project extends React.Component {
   };
 
   render() {
-    const { deleteProject } = this.props;
-    const { filter, projects = [] } = this.state;
+    const { filter, projects, changeFilter, deleteProject } = this.props;
 
     return (
       <>
@@ -97,10 +66,7 @@ class Project extends React.Component {
           <header className="project-subHeader">
             <Dropdown
               overlay={
-                <FilterMenu
-                  filter={filter}
-                  onChangeFilter={this.changeFilter}
-                />
+                <FilterMenu filter={filter} onChangeFilter={changeFilter} />
               }
             >
               <a className="ant-dropdown-link" href="#">
@@ -116,7 +82,10 @@ class Project extends React.Component {
           <Row gutter={16}>
             {projects.map(project => (
               <Col span={8} key={project.path}>
-                <article className="project-card">
+                <article
+                  className="project-card"
+                  onClick={() => this.manageProject(project)}
+                >
                   <header>
                     <Avatar src={project.template.cover} />
                     <h2>{project.name}</h2>
@@ -129,7 +98,8 @@ class Project extends React.Component {
                       title="确定删除？"
                       okText="Yes"
                       cancelText="No"
-                      onConfirm={() => {
+                      onConfirm={e => {
+                        e.stopPropagation();
                         deleteFile(project.path)
                           .then(() => {
                             deleteProject(project);
@@ -141,50 +111,15 @@ class Project extends React.Component {
                       }}
                     >
                       <Tooltip placement="bottom" title="删除项目">
-                        <Icon type="delete" />
+                        <Icon
+                          type="delete"
+                          onClick={e => e.stopPropagation()}
+                        />
                       </Tooltip>
                     </Popconfirm>
                   </footer>
                 </article>
               </Col>
-
-              // <Col span={8} key={project.path}>
-              //   <Card
-              //     actions={[
-              //       <Tooltip title="编辑项目">
-              //         <Icon
-              //           type="edit"
-              //           onClick={() => this.manageProject(project)}
-              //         />
-              //       </Tooltip>,
-              //       <Popconfirm
-              //         title="确定删除？"
-              //         okText="Yes"
-              //         cancelText="No"
-              //         onConfirm={() => {
-              //           deleteFile(project.path)
-              //             .then(() => {
-              //               deleteProject(project);
-              //               message.success("已成功删除");
-              //             })
-              //             .catch(e => {
-              //               message.error("删除失败");
-              //             });
-              //         }}
-              //       >
-              //         <Tooltip placement="bottom" title="删除项目">
-              //           <Icon type="delete" />
-              //         </Tooltip>
-              //       </Popconfirm>
-              //     ]}
-              //   >
-              //     <Card.Meta
-              //       avatar={<Avatar src={project.template.cover} />}
-              //       title={project.name}
-              //       description={project.createAt}
-              //     />
-              //   </Card>
-              // </Col>
             ))}
 
             <Col span={8}>
@@ -205,11 +140,12 @@ class Project extends React.Component {
 
 const mapStateToProps = state => ({
   loading: state.loading.loading,
-  projects: state.project.projects
+  projects: state.project.projects,
+  filter: state.project.filter
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ deleteProject }, dispatch);
+  bindActionCreators({ changeFilter, deleteProject }, dispatch);
 
 export default connect(
   mapStateToProps,

@@ -1,14 +1,29 @@
 import React from "react";
 import { Card, Button, Icon, Drawer } from "antd";
-import JSONEditor from "jsoneditor";
-import "jsoneditor/dist/jsoneditor.min.css";
+import Preview from "./Preview";
+import JSONEditor from "./JSONEditor";
 import PageForm from "./PageFrom";
 import * as Components from "../../../../../resource/components/index";
 import "./style.scss";
 
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+  return result;
+};
+
+function guid() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 export default class PageGenerator extends React.Component {
   state = {
-    selectedComponents: [], // 为新页面添加的组件
+    components: [], // 为新页面添加的组件
     currentDragComponent: null, // 当前选中被拖拽组件
     currentSelectedComponent: null, // 新页面被选中编辑组件
     currentSelectedComponentJSONProps: {}, // 新页面被选中编辑组件 props
@@ -16,9 +31,25 @@ export default class PageGenerator extends React.Component {
     isPreview: false
   };
 
-  addSelectedComponents = Component => {
-    const selectedComponents = this.state.selectedComponents;
-    this.setState({ selectedComponents: [...selectedComponents, Component] });
+  addComponents = component => {
+    const components = this.state.components;
+    this.setState({ components: [...components, component] });
+  };
+
+  onSortEnd = result => {
+    if (!result.destination) {
+      return;
+    }
+
+    const components = reorder(
+      this.state.components,
+      result.source.index,
+      result.destination.index
+    );
+
+    this.setState({
+      components
+    });
   };
 
   getPreviewContainer = el => {
@@ -32,44 +63,83 @@ export default class PageGenerator extends React.Component {
     }
   };
 
-  initJSONEditor = container => {
-    if (this.editor) {
-      return;
-    }
-
-    if (container) {
-      const editor = new JSONEditor(container, {
-        onChange: () => {
-          const { currentSelectedComponent } = this.state;
-          currentSelectedComponent.props = this.editor.get();
-          // console.log("update");
-          // this.forceUpdate();
-          this.setState({ currentSelectedComponent });
-        }
-      });
-      editor.set(this.state.currentSelectedComponentJSONProps);
-      this.editor = editor;
-    }
-  };
-
-  createAddableComponnet = (type, index) => {
-    const len = this.state.selectedComponents.length;
-    const key = type + "-" + len;
+  createAddableComponnet = type => {
+    const key = `render-component-${type}__${this.state.components.length}`;
     const TargetComponnet = Components[type];
     const info = TargetComponnet.componentInfo;
     const defaultProps = TargetComponnet.defaultProps;
+    const isPreview = this.state.isPreview;
 
     const WrappedComponent = {
       key,
       type,
       info,
       props: defaultProps,
-      Instance: props => <TargetComponnet key={key} {...props} />
+      children: [],
+      Instance: null
     };
 
-    if (defaultProps && defaultProps.children) {
-      WrappedComponent.children = [];
-    }
+    const onClick = e => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.setState({
+        currentSelectedComponent: WrappedComponent,
+        currentSelectedComponentJSONProps: WrappedComponent.props
+      });
+    };
+
+    const Instance =
+      defaultProps && defaultProps.children
+        ? props => {
+            return (
+              <TargetComponnet key={key} {...WrappedComponent.props}>
+                <div
+                  className={
+                    !isPreview
+                      ? "component-render-wrapper is-inner"
+                      : "component-render-wrapper is-inner is-preview"
+                  }
+                  id={key}
+                  onDragOver={e => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    return true;
+                  }}
+                  onDrop={e => {
+                    e.stopPropagation();
+                    this.state.currentDragComponent.parent = WrappedComponent;
+                    WrappedComponent.children.push(
+                      this.state.currentDragComponent
+                    );
+                    this.setState({ currentComponent: null });
+                    this.scrollPreviewContainer();
+                  }}
+                  onClick={onClick}
+                  data-info={info.title}
+                >
+                  {WrappedComponent.children.map(Component => {
+                    return <Component.Instance />;
+                  })}
+                </div>
+              </TargetComponnet>
+            );
+          }
+        : props => (
+            <div
+              key={key}
+              className={
+                !isPreview
+                  ? "component-render-wrapper"
+                  : "component-render-wrapper is-preview"
+              }
+              data-info={info.title}
+              onClick={onClick}
+            >
+              <TargetComponnet {...WrappedComponent.props} />
+            </div>
+          );
+
+    WrappedComponent.Instance = Instance;
 
     return (
       <Card
@@ -80,7 +150,7 @@ export default class PageGenerator extends React.Component {
           this.setState({ currentDragComponent: WrappedComponent });
         }}
         onClick={() => {
-          this.addSelectedComponents(WrappedComponent);
+          this.addComponents(WrappedComponent);
           this.scrollPreviewContainer();
         }}
         title={info.title}
@@ -91,77 +161,14 @@ export default class PageGenerator extends React.Component {
     );
   };
 
-  createPreviewComponent = (Component, parentKey = null) => {
-    const isPreview = this.state.isPreview;
-    const hasChildren = Component.children;
-    const key = parentKey ? parentKey + "_" + Component.key : Component.key;
-
-    const onClick = e => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.setState({
-        currentSelectedComponent: Component,
-        currentSelectedComponentJSONProps: Component.props
-      });
-
-      if (this.editor) {
-        this.editor.set(Component.props);
-      }
-    };
-
-    return hasChildren ? (
-      <Component.Instance key={key} {...Component.props}>
-        <div
-          className={
-            !isPreview
-              ? "component-render-wrapper is-inner"
-              : "component-render-wrapper is-inner is-preview"
-          }
-          id={key}
-          onDragOver={e => {
-            e.stopPropagation();
-            e.preventDefault();
-            return true;
-          }}
-          onDrop={e => {
-            e.stopPropagation();
-            this.state.currentDragComponent.parent = Component;
-            Component.children.push(this.state.currentDragComponent);
-            this.setState({ currentComponent: null });
-            this.scrollPreviewContainer();
-          }}
-          onClick={onClick}
-          data-info={Component.info.title}
-        >
-          {Component.children.map((child, i) =>
-            this.createPreviewComponent(child, key + "_" + i)
-          )}
-        </div>
-      </Component.Instance>
-    ) : (
-      <div
-        key={key}
-        className={
-          !isPreview
-            ? "component-render-wrapper"
-            : "component-render-wrapper is-preview"
-        }
-        data-info={Component.info.title}
-        onClick={onClick}
-      >
-        <Component.Instance {...Component.props} />
-      </div>
-    );
-  };
-
-  deletePreviewComponent = Component => {
+  deletePreviewComponent = component => {
     let arr = [];
-    if (Component.parent) {
-      arr = Component.parent.children;
+    if (component.parent) {
+      arr = component.parent.children;
     } else {
-      arr = this.state.selectedComponents;
+      arr = this.state.components;
     }
-    arr.splice(arr.findIndex(c => c == Component), 1);
+    arr.splice(arr.findIndex(c => c == component), 1);
     this.forceUpdate();
   };
 
@@ -175,7 +182,7 @@ export default class PageGenerator extends React.Component {
 
   reset = () => {
     this.setState({
-      selectedComponents: [], // 为新页面添加的组件
+      Components: [], // 为新页面添加的组件
       currentDragComponent: null, // 当前选中被拖拽组件
       currentSelectedComponent: null, // 新页面被选中编辑组件
       currentSelectedComponentJSONProps: {} // 新页面被选中编辑组件 props
@@ -256,34 +263,27 @@ export default class PageGenerator extends React.Component {
                 }}
                 onDrop={e => {
                   e.stopPropagation();
-                  this.addSelectedComponents(this.state.currentDragComponent);
+                  this.addComponents(this.state.currentDragComponent);
                   this.setState({ currentComponent: null });
                   this.scrollPreviewContainer();
                 }}
               >
-                {this.state.selectedComponents.map(child =>
-                  this.createPreviewComponent(child)
-                )}
+                <Preview
+                  components={this.state.components}
+                  onSortEnd={this.onSortEnd}
+                />
               </main>
             </div>
             {/* E 页面预览 */}
 
-            {/* S JSON 编辑器 */}
-            <div className="editor-component-editor">
-              <header>
-                <h3>组件编辑器</h3>
-                <Icon type="close" />
-              </header>
-              <main ref={this.initJSONEditor} />
-            </div>
-            {/* E  JSON 编辑器 */}
+            <JSONEditor value={this.state.currentSelectedComponentJSONProps} />
           </main>
         </div>
 
         <PageForm
           visible={this.state.showModal}
           project={this.props.project}
-          components={this.state.selectedComponents}
+          components={this.state.Components}
           toggleShowModal={this.toggleShowModal}
         />
       </Drawer>

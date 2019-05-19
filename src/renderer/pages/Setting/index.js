@@ -27,7 +27,7 @@ const store = storage.store;
 
 const Block = ({ title, desc, children }) => {
   return (
-    <Col span={12}>
+    <Col span={12} key={title}>
       <div className="setting-box">
         <div className="setting-box-title">
           <p>{title}</p>

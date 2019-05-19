@@ -2,8 +2,13 @@ import { createProject as addProject } from "../../api";
 import { startLoading, stopLoading } from "./loading";
 
 const initialState = {
+  filter: { by: "createAt", order: "desc" }, // 过滤条件
   projects: []
 };
+
+export function changeFilter(filter) {
+  return { type: "CHANGE_FILTER", payload: filter };
+}
 
 export function createProject({ template, project }) {
   return dispatch => {
@@ -42,6 +47,30 @@ export default function(state = initialState, action) {
         ...state,
         projects: projects.filter(d => d.path !== project.path)
       };
+
+    case "CHANGE_FILTER": {
+      const filter = action.payload;
+      const projects = state.projects;
+      const { by, order } = filter;
+
+      console.log(
+        "change",
+        filter,
+        projects.sort((a, b) => {
+          let compare = a[by] - b[by];
+          return order === "desc" ? -compare : compare;
+        })
+      );
+
+      return {
+        ...state,
+        filter,
+        projects: [...projects].sort((a, b) => {
+          let compare = a[by] - b[by];
+          return order === "desc" ? -compare : compare;
+        })
+      };
+    }
 
     default:
       return state;

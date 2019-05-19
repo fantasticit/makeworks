@@ -1,58 +1,53 @@
 // 头部组件样式
 .ant-page-header {
-  // display: flex;
-  // align-items: center;
-
   .ant-page-header-content-view {
     float: right;
     padding: 0;
   }
 }
 
-.project-info-card {
-  .ant-card-body {
-    height: 320px;
-    overflow: auto;
+.page-projectManager {
+  .project-info-card {
+    .ant-card-body {
+      height: 320px;
+      overflow: auto;
+    }
+
+    .ant-list-item {
+      display: flex;
+      justify-content: space-between;
+    }
   }
 
-  .ant-list-item {
+  .ant-layout > main.project {
+    padding-top: 50px;
+  }
+
+  .ant-alert.ant-alert-closable {
+    margin: 10px 0;
+  }
+
+  .ant-row.project-sub-header {
     display: flex;
     justify-content: space-between;
-  }
-}
+    align-items: stretch;
 
-.ant-layout > main.project {
-  padding-top: 50px;
-}
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    padding: 10px 24px;
+    background: #f7f7f7;
+    font-size: 0.9em;
 
-.ant-alert.ant-alert-closable {
-  margin: 10px 0;
-}
+    > div {
+      display: flex;
+      align-items: center;
 
-.ant-notification-notice-with-icon .ant-notification-notice-description {
-  // margin-left: 62px !important;
-}
-
-.ant-row.project-sub-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  width: 100%;
-  padding: 10px 24px;
-  background: #f7f7f7;
-  font-size: 0.9em;
-
-  > div {
-    display: flex;
-    align-items: center;
-
-    &:last-child {
-      justify-content: flex-end;
+      &:last-child {
+        justify-content: flex-end;
+      }
     }
   }
 }

@@ -12,8 +12,6 @@ class Header extends React.Component {
   render() {
     const { name, path, currentEditor, currentTerminal, onBack } = this.props;
 
-    console.log(this.props);
-
     return (
       <PageHeader onBack={onBack} title={name} subTitle={path}>
         <Tooltip title="在编辑器中打开">

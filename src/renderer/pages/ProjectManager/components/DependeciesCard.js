@@ -11,8 +11,11 @@ export default class extends React.Component {
       <Card
         key={"项目依赖"}
         title="项目依赖"
+        key="项目依赖"
         className="project-info-card"
-        extra={[<Button shape="circle" icon="sync" onClick={onSync} />]}
+        extra={[
+          <Button shape="circle" key="sync" icon="sync" onClick={onSync} />
+        ]}
       >
         <Tabs defaultActiveKey="1">
           {[

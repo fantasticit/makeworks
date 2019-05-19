@@ -10,8 +10,6 @@ class Header extends React.Component {
   render() {
     const { version, scripts, path } = this.props;
 
-    console.log(this.props);
-
     return (
       <Row className="project-sub-header">
         <Col span={12}>

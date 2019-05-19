@@ -10,7 +10,7 @@ import { getProjectInfo } from "../../api/index";
 import "./style.scss";
 
 export default class extends React.Component {
-  state = { showEditor: false };
+  state = { showEditor: true };
 
   toggleEditor = () => {
     this.setState({ showEditor: !this.state.showEditor });
@@ -80,7 +80,7 @@ export default class extends React.Component {
           onBack={this.goback}
         />
 
-        <main className="project">
+        <main className="page-projectManager">
           <SubHeader scripts={scripts} version={version} path={path} />
 
           <Editor
@@ -99,7 +99,7 @@ export default class extends React.Component {
           /> */}
 
           <Row gutter={16}>
-            <Col span={12}>
+            <Col span={12} key="dependencise">
               {/* 依赖卡片 */}
               <DependenciesCard
                 dependencies={dependencies}
@@ -108,7 +108,7 @@ export default class extends React.Component {
               />
             </Col>
 
-            <Col span={12}>
+            <Col span={12} key="pages">
               <PagesCard
                 pages={pages}
                 onSync={this.getProjectInfo}
