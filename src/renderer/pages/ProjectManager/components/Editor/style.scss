@@ -86,7 +86,6 @@
   height: 100%;
   background: #fff;
   transition: all ease-in-out 0.3s;
-
   box-shadow: 3px 0 16px rgba(0, 0, 0, 0.06);
 
   header {
@@ -112,6 +111,10 @@
 }
 
 .editor-components {
+  &.is-preview {
+    transform: translateX(-100%);
+  }
+
   ul {
     display: flex;
     flex-wrap: wrap;
@@ -164,6 +167,10 @@
 .editor-component-editor {
   right: 0;
 
+  &.is-preview {
+    transform: translateX(100%);
+  }
+
   &.is-hide {
     transform: translateX(100%);
   }
@@ -184,9 +191,14 @@
   width: 50%;
   height: 100%;
   margin: 0 auto;
-  padding: 15px 0 30px;
+  padding: 15px 0 10px;
   display: flex;
   flex-direction: column;
+  transition: all ease-in-out 0.2s;
+
+  &.is-preview {
+    width: 96%;
+  }
 
   > header {
     padding-bottom: 10px;
@@ -268,11 +280,10 @@
         }
       }
     }
+  }
 
-    .canary-componet_toolbar {
-      position: absolute;
-      transform: translateY(-100%);
-      top: -10px;
-    }
+  > footer {
+    margin-top: 10px;
+    text-align: center;
   }
 }

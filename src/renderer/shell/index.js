@@ -1,24 +1,55 @@
 import { shell, clipboard } from "electron";
-import { get as exec } from "node-cmd";
+import shelljs from "shelljs";
+
+let nodePath = shelljs.which("node").toString();
+shelljs.config.execPath = nodePath;
+
+console.info("shelljs 执行路径", nodePath);
 
 let noop = () => {};
+
+export const EXEC_LOG_STACK = []; // 运行日志
+
+export function clearExecLog() {
+  EXEC_LOG_STACK = [];
+}
 
 export function runExec({
   command,
   onData = noop,
+  onWarning = noop,
   onError = noop,
   onExit = noop,
   onClose = noop
 }) {
-  exec(command, function(err, data, stderr) {
+  let now = new Date();
+  now = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+
+  shelljs.exec(command, function(code, stdout, stderr) {
     onClose();
 
-    if (err) {
-      onError(err);
+    if (stderr && code !== 0) {
+      onError(stderr);
+      console.error("执行命令出错", command, code, stderr);
+      EXEC_LOG_STACK.push({
+        time: now,
+        command,
+        status: "failed",
+        info: stderr,
+        code
+      });
     } else {
-      onData(data);
-      onClose();
+      onData(stdout);
+      onWarning(stderr);
       onExit();
+      EXEC_LOG_STACK.push({
+        time: now,
+        command,
+        status: "ok",
+        info: stdout,
+        code
+      });
+      console.log("执行命令结束", command, code, stdout);
     }
   });
 }

@@ -1,13 +1,41 @@
 import React from "react";
-import { Button, Icon, Drawer } from "antd";
+import { Button, Icon, Drawer, Tooltip } from "antd";
 import * as Components from "../../../../../resource/components";
 import Preview from "./Preview";
-import JSONEditor from "./JSONEditor";
+import JSONEditor from "jsoneditor";
+import "jsoneditor/dist/jsoneditor.min.css";
 import PageForm from "./PageFrom";
 import WrappedComponent from "./WrappedComponent";
 import "./style.scss";
 
 let currentDragComponent = null;
+
+function debounce(func, wait, immediate) {
+  let timeout;
+
+  const debounced = function() {
+    const context = this;
+    const args = arguments;
+    const later = function() {
+      timeout = null;
+      if (!immediate) {
+        func.apply(context, args);
+      }
+    };
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) {
+      func.apply(context, args);
+    }
+  };
+
+  debounced.cancel = () => {
+    clearTimeout(timeout);
+  };
+
+  return debounced;
+}
 
 export default class PageGenerator extends React.Component {
   state = {
@@ -17,6 +45,25 @@ export default class PageGenerator extends React.Component {
     currentSelectedComponentProps: {}, // 新页面被选中编辑组件 props
     showModal: false,
     isPreview: false
+  };
+
+  initJSONEditor = container => {
+    // if (this.editor) {
+    //   return;
+    // }
+
+    if (container) {
+      const editor = new JSONEditor(container, {
+        mode: "tree",
+        onChange: debounce(() => {
+          const value = this.editor.get();
+          this.state.currentSelectedComponent.props = value;
+          this.setState({ currentSelectedComponentProps: value });
+        }, 300)
+      });
+      editor.set(this.state.currentSelectedComponentProps);
+      this.editor = editor;
+    }
   };
 
   addComponents = component => {
@@ -29,6 +76,7 @@ export default class PageGenerator extends React.Component {
       currentSelectedComponent: component,
       currentSelectedComponentProps: component.props
     });
+    this.editor && this.editor.set(component.props);
   };
 
   onDragStart = component => {
@@ -124,6 +172,7 @@ export default class PageGenerator extends React.Component {
 
   render() {
     const { project } = this.props;
+    const { isPreview } = this.state;
 
     return (
       <Drawer
@@ -160,10 +209,15 @@ export default class PageGenerator extends React.Component {
 
           <main>
             {/* S 组件选择面板 */}
-            <div className="editor-components">
+            <div
+              className={[
+                "editor-components",
+                isPreview ? "is-preview" : ""
+              ].join(" ")}
+            >
               <header>
                 <h3>添加组件</h3>
-                <Icon type="close" />
+                {/* <Icon type="close" /> */}
               </header>
               <main>
                 {Object.keys(Components).map(this.createAddableComponnet)}
@@ -172,19 +226,25 @@ export default class PageGenerator extends React.Component {
             {/* E 组件选择面板 */}
 
             {/* S 页面预览 */}
-            <div className="editor-preview">
+            <div
+              className={["editor-preview", isPreview ? "is-preview" : ""].join(
+                " "
+              )}
+            >
               <header className="preview-box__toolbar">
                 <h3>页面预览</h3>
-                <Button
-                  shape="circle"
-                  icon="delete"
-                  onClick={() => {
-                    this.deletePreviewComponent(
-                      this.state.currentSelectedComponent
-                    );
-                    // this.editor.set({});
-                  }}
-                />
+                <Tooltip title="删除选中的组件">
+                  <Button
+                    shape="circle"
+                    icon="delete"
+                    onClick={() => {
+                      this.deletePreviewComponent(
+                        this.state.currentSelectedComponent
+                      );
+                      // this.editor.set({});
+                    }}
+                  />
+                </Tooltip>
               </header>
 
               <main
@@ -209,16 +269,31 @@ export default class PageGenerator extends React.Component {
                   onSortEnd={this.onSortEnd}
                 />
               </main>
+
+              <footer>实时组件数量：{this.state.components.length}</footer>
             </div>
             {/* E 页面预览 */}
 
-            <JSONEditor
+            {/* <JSONEditor
               value={this.state.currentSelectedComponentProps}
               onChange={value => {
                 this.state.currentSelectedComponent.props = value;
                 this.setState({ currentSelectedComponentProps: value });
               }}
-            />
+            /> */}
+
+            <div
+              className={[
+                "editor-component-editor",
+                isPreview ? "is-preview" : ""
+              ].join(" ")}
+            >
+              <header>
+                <h3>组件编辑器</h3>
+                {/* <Icon type="close" /> */}
+              </header>
+              <main ref={this.initJSONEditor} />
+            </div>
           </main>
         </div>
 

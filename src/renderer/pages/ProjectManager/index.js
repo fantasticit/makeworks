@@ -10,7 +10,7 @@ import { getProjectInfo } from "../../api/index";
 import "./style.scss";
 
 export default class extends React.Component {
-  state = { showEditor: true };
+  state = { showEditor: false };
 
   toggleEditor = () => {
     this.setState({ showEditor: !this.state.showEditor });

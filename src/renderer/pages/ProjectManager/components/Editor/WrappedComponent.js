@@ -2,6 +2,14 @@ import React from "react";
 import { Card } from "antd";
 import * as UseableComponents from "../../../../../resource/components/index";
 
+function guid() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 const DraggableComponent = ({
   id,
   children,
@@ -70,6 +78,7 @@ export default function withWrappedComponent({
   };
 
   const _onDrop = () => {
+    WrappedComponent.ley = `render-component-${type}__${guid()}`;
     onDrop(WrappedComponent);
   };
 
@@ -123,10 +132,13 @@ export default function withWrappedComponent({
 
   return (
     <Card
-      itle={info.title}
+      title={info.title}
       bordered={true}
       draggable={true}
-      onClick={() => onAdd(WrappedComponent)}
+      onClick={() => {
+        WrappedComponent.ley = `render-component-${type}__${guid()}`;
+        onAdd(WrappedComponent);
+      }}
       onDragStart={e => {
         e.stopPropagation();
         onDragStart(WrappedComponent);
