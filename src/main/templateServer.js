@@ -18,7 +18,7 @@ export default function() {
       const templates = dirs
         .filter(d => !/^\./.test(d))
         .map(dir => {
-          let infoPath = path.join(rootPath, dir, "canary.json");
+          let infoPath = path.join(rootPath, dir, "makeworks.json");
 
           if (!fs.existsSync(infoPath)) {
             infoPath = path.join(rootPath, dir, "package.json");

@@ -116,7 +116,7 @@
     "webpack-merge": "^4.1.2"
   },
   "dependencies": {
-    "@qcharts/react": "0.0.5",
+    "@qcharts/react": "0.0.7",
     "antd": "^3.17.0",
     "electron-store": "^3.2.0",
     "fs-extra": "^7.0.1",
