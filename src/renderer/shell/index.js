@@ -1,10 +1,11 @@
 import { shell, clipboard } from "electron";
 import shelljs from "shelljs";
 
-let nodePath = shelljs.which("node").toString();
-shelljs.config.execPath = nodePath;
-
-console.info("shelljs 执行路径", nodePath);
+try {
+  let nodePath = shelljs.which("node").toString();
+  shelljs.config.execPath = nodePath;
+  console.info("shelljs 执行路径", nodePath);
+} catch (e) {}
 
 let noop = () => {};
 
