@@ -1,32 +1,20 @@
 import React from "react";
-import { Card, Button, Icon, Drawer } from "antd";
+import { Button, Icon, Drawer } from "antd";
+import * as Components from "../../../../../resource/components";
 import Preview from "./Preview";
 import JSONEditor from "./JSONEditor";
 import PageForm from "./PageFrom";
-import * as Components from "../../../../../resource/components/index";
+import WrappedComponent from "./WrappedComponent";
 import "./style.scss";
 
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
-};
-
-function guid() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-    var r = (Math.random() * 16) | 0,
-      v = c == "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
+let currentDragComponent = null;
 
 export default class PageGenerator extends React.Component {
   state = {
     components: [], // 为新页面添加的组件
     currentDragComponent: null, // 当前选中被拖拽组件
     currentSelectedComponent: null, // 新页面被选中编辑组件
-    currentSelectedComponentJSONProps: {}, // 新页面被选中编辑组件 props
+    currentSelectedComponentProps: {}, // 新页面被选中编辑组件 props
     showModal: false,
     isPreview: false
   };
@@ -36,10 +24,39 @@ export default class PageGenerator extends React.Component {
     this.setState({ components: [...components, component] });
   };
 
+  selectComponent = component => {
+    this.setState({
+      currentSelectedComponent: component,
+      currentSelectedComponentProps: component.props
+    });
+  };
+
+  onDragStart = component => {
+    currentDragComponent = component;
+    this.setState({ currentDragComponent: component });
+  };
+
+  onDrop = WrappedComponent => {
+    if (!currentDragComponent || !WrappedComponent) {
+      return;
+    }
+
+    currentDragComponent.parent = WrappedComponent;
+    WrappedComponent.children.push(currentDragComponent);
+    this.setState({ currentDragComponent: null });
+  };
+
   onSortEnd = result => {
     if (!result.destination) {
       return;
     }
+
+    const reorder = (list, startIndex, endIndex) => {
+      const result = Array.from(list);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return result;
+    };
 
     const components = reorder(
       this.state.components,
@@ -64,100 +81,16 @@ export default class PageGenerator extends React.Component {
   };
 
   createAddableComponnet = type => {
-    const key = `render-component-${type}__${this.state.components.length}`;
-    const TargetComponnet = Components[type];
-    const info = TargetComponnet.componentInfo;
-    const defaultProps = TargetComponnet.defaultProps;
-    const isPreview = this.state.isPreview;
-
-    const WrappedComponent = {
-      key,
-      type,
-      info,
-      props: defaultProps,
-      children: [],
-      Instance: null
-    };
-
-    const onClick = e => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.setState({
-        currentSelectedComponent: WrappedComponent,
-        currentSelectedComponentJSONProps: WrappedComponent.props
-      });
-    };
-
-    const Instance =
-      defaultProps && defaultProps.children
-        ? props => {
-            return (
-              <TargetComponnet key={key} {...WrappedComponent.props}>
-                <div
-                  className={
-                    !isPreview
-                      ? "component-render-wrapper is-inner"
-                      : "component-render-wrapper is-inner is-preview"
-                  }
-                  id={key}
-                  onDragOver={e => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    return true;
-                  }}
-                  onDrop={e => {
-                    e.stopPropagation();
-                    this.state.currentDragComponent.parent = WrappedComponent;
-                    WrappedComponent.children.push(
-                      this.state.currentDragComponent
-                    );
-                    this.setState({ currentComponent: null });
-                    this.scrollPreviewContainer();
-                  }}
-                  onClick={onClick}
-                  data-info={info.title}
-                >
-                  {WrappedComponent.children.map(Component => {
-                    return <Component.Instance />;
-                  })}
-                </div>
-              </TargetComponnet>
-            );
-          }
-        : props => (
-            <div
-              key={key}
-              className={
-                !isPreview
-                  ? "component-render-wrapper"
-                  : "component-render-wrapper is-preview"
-              }
-              data-info={info.title}
-              onClick={onClick}
-            >
-              <TargetComponnet {...WrappedComponent.props} />
-            </div>
-          );
-
-    WrappedComponent.Instance = Instance;
-
     return (
-      <Card
-        key={key}
-        draggable={true}
-        onDragStart={e => {
-          e.stopPropagation();
-          this.setState({ currentDragComponent: WrappedComponent });
+      <WrappedComponent
+        {...{
+          type,
+          onAdd: this.addComponents,
+          onDragStart: this.onDragStart,
+          onDrop: this.onDrop,
+          onSelect: this.selectComponent
         }}
-        onClick={() => {
-          this.addComponents(WrappedComponent);
-          this.scrollPreviewContainer();
-        }}
-        title={info.title}
-        bordered={true}
-      >
-        <TargetComponnet />
-      </Card>
+      />
     );
   };
 
@@ -182,7 +115,7 @@ export default class PageGenerator extends React.Component {
 
   reset = () => {
     this.setState({
-      Components: [], // 为新页面添加的组件
+      components: [], // 为新页面添加的组件
       currentDragComponent: null, // 当前选中被拖拽组件
       currentSelectedComponent: null, // 新页面被选中编辑组件
       currentSelectedComponentJSONProps: {} // 新页面被选中编辑组件 props
@@ -249,7 +182,7 @@ export default class PageGenerator extends React.Component {
                     this.deletePreviewComponent(
                       this.state.currentSelectedComponent
                     );
-                    this.editor.set({});
+                    // this.editor.set({});
                   }}
                 />
               </header>
@@ -263,12 +196,15 @@ export default class PageGenerator extends React.Component {
                 }}
                 onDrop={e => {
                   e.stopPropagation();
-                  this.addComponents(this.state.currentDragComponent);
-                  this.setState({ currentComponent: null });
-                  this.scrollPreviewContainer();
+                  this.addComponents(
+                    this.state.currentDragComponent || currentDragComponent
+                  );
+                  this.setState({ currentDragComponent: null });
+                  currentDragComponent = null;
                 }}
               >
                 <Preview
+                  isPreview={this.state.isPreview}
                   components={this.state.components}
                   onSortEnd={this.onSortEnd}
                 />
@@ -276,14 +212,20 @@ export default class PageGenerator extends React.Component {
             </div>
             {/* E 页面预览 */}
 
-            <JSONEditor value={this.state.currentSelectedComponentJSONProps} />
+            <JSONEditor
+              value={this.state.currentSelectedComponentProps}
+              onChange={value => {
+                this.state.currentSelectedComponent.props = value;
+                this.setState({ currentSelectedComponentProps: value });
+              }}
+            />
           </main>
         </div>
 
         <PageForm
           visible={this.state.showModal}
           project={this.props.project}
-          components={this.state.Components}
+          components={this.state.components}
           toggleShowModal={this.toggleShowModal}
         />
       </Drawer>

@@ -7,15 +7,12 @@ export class Header extends React.Component {
     desc: "通用头部导航"
   };
 
-  static defaultProps = {
-    children: []
-  };
+  static defaultProps = {};
 
   render() {
     return (
       <header>
         <h1>头部</h1>
-        {this.props.children}
       </header>
     );
   }

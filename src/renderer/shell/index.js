@@ -1,8 +1,6 @@
 import { shell, clipboard } from "electron";
 import { get as exec } from "node-cmd";
-import logo from "../assets/logo.png";
 
-let workerProcess = null;
 let noop = () => {};
 
 export function runExec({

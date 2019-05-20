@@ -1,17 +1,5 @@
 import React from "react";
-import {
-  Card,
-  Col,
-  Row,
-  Layout,
-  Button,
-  Modal,
-  Tabs,
-  Form,
-  Input,
-  Radio,
-  message
-} from "antd";
+import { Modal, Form, Input, message } from "antd";
 import { createPageForProject } from "../../../../api/index";
 
 class PageFrom extends React.Component {
@@ -21,19 +9,11 @@ class PageFrom extends React.Component {
     this.setState({ selectedTemplate: template });
   };
 
-  showModal = () => {
-    this.setState({
-      showModal: true
-    });
-  };
-
   handleOk = e => {
     e.preventDefault();
     this.props["form"].validateFields((err, values) => {
       if (!err) {
         this.setState({ showLoading: true });
-
-        console.log(this.props.components);
 
         createPageForProject({
           ...values,
@@ -48,7 +28,7 @@ class PageFrom extends React.Component {
           })
           .catch(e => {
             this.setState({ showLoading: false });
-            message.error("新建页面失败");
+            message.error("新建页面失败", e.message || e);
           });
       }
     });

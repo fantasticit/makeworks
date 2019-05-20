@@ -92,12 +92,13 @@ class Project extends React.Component {
                   </header>
                   <footer>
                     <Tooltip title="复制路径" placement="bottom">
-                      <p onClick={() => copy(project.path)}>{project.path}</p>
+                      <p onClick={(e) => { e.stopPropagation(); copy(project.path)}}>{project.path}</p>
                     </Tooltip>
                     <Popconfirm
                       title="确定删除？"
                       okText="Yes"
                       cancelText="No"
+                      onCancel={e => e.stopPropagation()}
                       onConfirm={e => {
                         e.stopPropagation();
                         deleteFile(project.path)

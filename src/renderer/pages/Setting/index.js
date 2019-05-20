@@ -10,7 +10,8 @@ import {
   Switch,
   Divider,
   Popconfirm,
-  message
+  message,
+  Tooltip
 } from "antd";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -117,8 +118,10 @@ class Setting extends React.Component {
           </Row>
 
           <Row gutter={16} className="setting-row">
-            <Block title={"检查更新"} desc={"当前版本 " + version}>
-              <Button icon={"sync"} type="link" />
+            <Block title={"版本管理"} desc={"当前版本 " + version}>
+              <Tooltip title="正在开发">
+                <Button icon={"sync"} type="link" />
+              </Tooltip>
             </Block>
           </Row>
 
