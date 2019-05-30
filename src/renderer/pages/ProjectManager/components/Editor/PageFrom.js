@@ -44,7 +44,7 @@ class PageFrom extends React.Component {
 
     return (
       <Modal
-        title="创建项目"
+        title="创建页面"
         visible={this.props.visible}
         onOk={this.handleOk}
         okText={"创建"}

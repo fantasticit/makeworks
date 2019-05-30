@@ -115,6 +115,11 @@
     transform: translateX(-100%);
   }
 
+  main .ant-card-body {
+    position: relative;
+    min-height: 160px;
+  }
+
   ul {
     display: flex;
     flex-wrap: wrap;
@@ -239,7 +244,7 @@
       height: auto;
       cursor: pointer;
       border: 1px dashed;
-      border-color: #000;
+      border-color: #333;
       background: #fff;
 
       &.is-inner {

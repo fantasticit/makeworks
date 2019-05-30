@@ -136,7 +136,7 @@ export default function withWrappedComponent({
       bordered={true}
       draggable={true}
       onClick={() => {
-        WrappedComponent.ley = `render-component-${type}__${guid()}`;
+        WrappedComponent.key = `render-component-${type}__${guid()}`;
         onAdd(WrappedComponent);
       }}
       onDragStart={e => {

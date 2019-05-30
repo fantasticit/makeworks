@@ -5,7 +5,7 @@ class BarChart extends React.Component {
   static componentInfo = {
     title: "柱状图",
     desc: "来自 @qcharts/react",
-    dependencies: ["@qcharts/react"]
+    dependencies: ["spritejs", "@qcharts/core", "@qcharts/react"]
   };
 
   static defaultProps = {
@@ -24,7 +24,7 @@ class BarChart extends React.Component {
       { product: "椰汁", year: "2018", sales: 21.2 }
     ],
     dataFields: { row: "year", value: "sales", text: "product" },
-    size: ["100%", 160],
+    size: ["100%", 200],
     forceFit: true
   };
 
@@ -43,9 +43,9 @@ class BarChart extends React.Component {
         size={size}
         forceFit={forceFit}
       >
-        <Bar />
-        <Axis />
-        <Axis orient={"left"} />
+        <Bar size={["80%", "70%"]} />
+        <Axis size={["80%", "70%"]} />
+        <Axis size={["80%", "70%"]} orient={"left"} />
       </Chart>
     );
   }

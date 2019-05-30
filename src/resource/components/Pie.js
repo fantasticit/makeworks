@@ -5,7 +5,7 @@ class PieChart extends React.Component {
   static componentInfo = {
     title: "饼图",
     desc: "来自 @qcharts/react",
-    dependencies: ["@qcharts/react"]
+    dependencies: ["spritejs", "@qcharts/core", "@qcharts/react"]
   };
 
   static defaultProps = {
@@ -32,6 +32,7 @@ class PieChart extends React.Component {
         forceFit={forceFit}
       >
         <Pie radius={radius} />
+        <Legend />
       </Chart>
     );
   }

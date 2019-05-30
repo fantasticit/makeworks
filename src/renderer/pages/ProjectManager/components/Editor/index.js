@@ -77,6 +77,7 @@ export default class PageGenerator extends React.Component {
       currentSelectedComponentProps: component.props
     });
     this.editor && this.editor.set(component.props);
+    console.log("setvalue", component.props);
   };
 
   onDragStart = component => {
@@ -232,7 +233,7 @@ export default class PageGenerator extends React.Component {
               )}
             >
               <header className="preview-box__toolbar">
-                <h3>页面预览</h3>
+                <h3 contentEditable="true">页面预览</h3>
                 <Tooltip title="删除选中的组件">
                   <Button
                     shape="circle"
